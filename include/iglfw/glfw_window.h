@@ -10,6 +10,7 @@
 #include <mathutil/uvec.h>
 #include <memory>
 #include <string>
+#include <optional>
 #include <functional>
 #include "glfw_cursor.h"
 #include "glfw_monitor.h"
@@ -68,6 +69,7 @@ namespace GLFW
 		std::function<void(Window&,bool)> m_iconifyCallback;
 		std::function<void(Window&,Vector2i)> m_windowPosCallback;
 		std::function<void(Window&,Vector2i)> m_windowSizeCallback;
+		std::optional<Vector2> m_cursorPosOverride = {};
 		void KeyCallback(int key,int scancode,int action,int mods);
 		void RefreshCallback();
 		void ResizeCallback(int width,int height);
@@ -110,6 +112,8 @@ namespace GLFW
 		std::string GetClipboardString() const;
 		void SetClipboardString(const std::string &str);
 		Vector2 GetCursorPos() const;
+		void SetCursorPosOverride(const Vector2 &pos);
+		void ClearCursorPosOverride();
 		void SetCursorPos(const Vector2 &pos);
 		void SetCursorInputMode(CursorMode mode);
 		CursorMode GetCursorInputMode() const;

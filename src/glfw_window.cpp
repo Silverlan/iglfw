@@ -159,11 +159,15 @@ void Window::SetClipboardString(const std::string &str) {glfwSetClipboardString(
 
 Vector2 Window::GetCursorPos() const
 {
+	if(m_cursorPosOverride.has_value())
+		return *m_cursorPosOverride;
 	double x = 0.0;
 	double y = 0.0;
 	glfwGetCursorPos(const_cast<GLFWwindow*>(GetGLFWWindow()),&x,&y);
 	return Vector2(x,y);
 }
+void Window::SetCursorPosOverride(const Vector2 &pos) {m_cursorPosOverride = pos;}
+void Window::ClearCursorPosOverride() {m_cursorPosOverride = {};}
 void Window::SetCursorPos(const Vector2 &pos) {glfwSetCursorPos(const_cast<GLFWwindow*>(GetGLFWWindow()),pos.x,pos.y);}
 void Window::SetCursorInputMode(CursorMode mode) {return glfwSetInputMode(const_cast<GLFWwindow*>(GetGLFWWindow()),GLFW_CURSOR,static_cast<int>(mode));}
 CursorMode Window::GetCursorInputMode() const {return static_cast<CursorMode>(glfwGetInputMode(const_cast<GLFWwindow*>(GetGLFWWindow()),GLFW_CURSOR));}
