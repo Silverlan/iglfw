@@ -5,6 +5,7 @@
 #include "iglfw/glfw_monitor.h"
 #include "iglfw/glfw_joystick.h"
 #include "iglfw/glfw.h"
+#include <cstring>
 
 using namespace GLFW;
 
