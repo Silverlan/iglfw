@@ -159,38 +159,3 @@ std::vector<GLFW::Monitor> GLFW::get_monitors()
 		r.push_back(Monitor(monitors[i]));
 	return r;
 }
-
-/*
-#ifdef __linux__
-class InitAndRelease
-{
-public:
-	InitAndRelease()
-	{
-		GLFW::initialize();
-	}
-	~InitAndRelease()
-	{
-		GLFW::terminate();
-	}
-} initAndRelease __attribute__((visibility("default")));
-#else
-BOOLEAN WINAPI DllMain(IN HINSTANCE,IN DWORD nReason,IN LPVOID)
-{
-	switch(nReason)
-	{
-	case DLL_PROCESS_ATTACH:
-		GLFW::initialize();
-		break;
-	case DLL_THREAD_ATTACH:
-		break;
-	case DLL_THREAD_DETACH:
-		break;
-	case DLL_PROCESS_DETACH:
-		GLFW::terminate();
-		break;
-	}
-	return TRUE;
-}
-#endif
-*/ // If GLFW is initialized this way, RenderDoc cannot run the program anymore
