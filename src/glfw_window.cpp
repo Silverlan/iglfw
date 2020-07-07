@@ -256,7 +256,17 @@ std::unique_ptr<Window> Window::Create(const WindowCreationInfo &info)
 	glfwWindowHint(GLFW_DEPTH_BITS,info.depthBits);
 	glfwWindowHint(GLFW_STENCIL_BITS,info.stencilBits);
 
-	glfwWindowHint(GLFW_CLIENT_API,GLFW_NO_API);
+	auto api = GLFW_NO_API;
+	switch(info.api)
+	{
+	case WindowCreationInfo::API::OpenGL:
+		api = GLFW_OPENGL_API;
+		break;
+	case WindowCreationInfo::API::OpenGLES:
+		api = GLFW_OPENGL_ES_API;
+		break;
+	}
+	glfwWindowHint(GLFW_CLIENT_API,api);
 
 	GLFWmonitor *monitor = nullptr;
 	if(info.monitor != nullptr)

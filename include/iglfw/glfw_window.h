@@ -46,6 +46,14 @@ namespace GLFW
 		uint32_t width;
 		uint32_t height;
 		std::unique_ptr<Monitor> monitor;
+
+		enum class API : uint8_t
+		{
+			None = 0,
+			OpenGL,
+			OpenGLES
+		};
+		API api = API::None;
 	};
 	class DLLGLFW Window
 	{
