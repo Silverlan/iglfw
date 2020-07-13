@@ -257,16 +257,22 @@ std::unique_ptr<Window> Window::Create(const WindowCreationInfo &info)
 	glfwWindowHint(GLFW_STENCIL_BITS,info.stencilBits);
 
 	auto api = GLFW_NO_API;
+	auto isOpenGLAPI = false;
 	switch(info.api)
 	{
 	case WindowCreationInfo::API::OpenGL:
+		isOpenGLAPI = true;
 		api = GLFW_OPENGL_API;
 		break;
 	case WindowCreationInfo::API::OpenGLES:
+		isOpenGLAPI = true;
 		api = GLFW_OPENGL_ES_API;
 		break;
 	}
 	glfwWindowHint(GLFW_CLIENT_API,api);
+
+	if(isOpenGLAPI && umath::is_flag_set(info.flags,WindowCreationInfo::Flags::DebugContext))
+		glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT,GLFW_TRUE);
 
 	GLFWmonitor *monitor = nullptr;
 	if(info.monitor != nullptr)

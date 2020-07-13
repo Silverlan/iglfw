@@ -24,6 +24,17 @@ namespace GLFW
 
 	struct DLLGLFW WindowCreationInfo
 	{
+		enum class API : uint8_t
+		{
+			None = 0,
+			OpenGL,
+			OpenGLES
+		};
+		enum class Flags : uint32_t
+		{
+			None = 0u,
+			DebugContext = 1u
+		};
 		WindowCreationInfo();
 		bool resizable;
 		bool visible;
@@ -46,14 +57,8 @@ namespace GLFW
 		uint32_t width;
 		uint32_t height;
 		std::unique_ptr<Monitor> monitor;
-
-		enum class API : uint8_t
-		{
-			None = 0,
-			OpenGL,
-			OpenGLES
-		};
 		API api = API::None;
+		Flags flags = Flags::None;
 	};
 	class DLLGLFW Window
 	{
@@ -154,6 +159,7 @@ namespace GLFW
 		void ClearCursor();
 	};
 };
+REGISTER_BASIC_BITWISE_OPERATORS(GLFW::WindowCreationInfo::Flags)
 #pragma warning(pop)
 
 #endif
