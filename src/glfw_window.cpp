@@ -130,6 +130,15 @@ const Monitor *Window::GetMonitor() const
 	return m_monitor.get();
 }
 
+WindowCreationInfo::API Window::GetAPI() const {return m_api;}
+
+void Window::MakeContextCurrent() const
+{
+	if(GetAPI() == WindowCreationInfo::API::None)
+		return;
+	glfwMakeContextCurrent(m_window);
+}
+
 const GLFWwindow *Window::GetGLFWWindow() const {return m_window;}
 
 void Window::SetKeyCallback(const std::function<void(Window&,Key,int,KeyState,Modifier)> &callback) {m_keyCallback = callback;}
@@ -372,5 +381,6 @@ std::unique_ptr<Window> Window::Create(const WindowCreationInfo &info)
 		vkWindow->WindowSizeCallback(w,h);
 	});
 	glfwSetWindowUserPointer(window,vkWindow.get());
+	vkWindow->m_api = info.api;
 	return vkWindow;
 }

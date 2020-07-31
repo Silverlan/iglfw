@@ -67,6 +67,7 @@ namespace GLFW
 		GLFWwindow *m_window;
 		std::unique_ptr<Monitor> m_monitor;
 		WindowHandle m_handle;
+		WindowCreationInfo::API m_api = WindowCreationInfo::API::None;
 		std::function<void(Window&,Key,int,KeyState,Modifier)> m_keyCallback;
 		std::function<void(Window&)> m_refreshCallback;
 		std::function<void(Window&,Vector2i)> m_resizeCallback;
@@ -147,6 +148,8 @@ namespace GLFW
 		void Show() const;
 		void Hide() const;
 		const Monitor *GetMonitor() const;
+		WindowCreationInfo::API GetAPI() const;
+		void MakeContextCurrent() const;
 
 		bool IsFocused() const;
 		bool IsIconified() const;
