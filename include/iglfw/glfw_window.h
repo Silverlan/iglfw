@@ -150,6 +150,7 @@ namespace GLFW
 		const Monitor *GetMonitor() const;
 		WindowCreationInfo::API GetAPI() const;
 		void MakeContextCurrent() const;
+		void UpdateWindow(const WindowCreationInfo &info);
 
 		bool IsFocused() const;
 		bool IsIconified() const;

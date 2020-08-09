@@ -205,6 +205,15 @@ Vector2i Window::GetSize() const
 }
 void Window::SetSize(const Vector2i &size) {glfwSetWindowSize(const_cast<GLFWwindow*>(GetGLFWWindow()),size.x,size.y);}
 
+void Window::UpdateWindow(const WindowCreationInfo &info)
+{
+	GLFWmonitor *monitor = nullptr;
+	if(info.monitor)
+		monitor = const_cast<GLFWmonitor*>(info.monitor->GetGLFWMonitor());
+	glfwSetWindowMonitor(m_window,monitor,0,0,info.width,info.height,GLFW_DONT_CARE);
+	glfwSetWindowAttrib(m_window,GLFW_DECORATED,info.decorated ? GLFW_TRUE : GLFW_FALSE);
+}
+
 Vector2i Window::GetFramebufferSize() const
 {
 	int w = 0;
