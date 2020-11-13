@@ -210,7 +210,9 @@ void Window::UpdateWindow(const WindowCreationInfo &info)
 	GLFWmonitor *monitor = nullptr;
 	if(info.monitor)
 		monitor = const_cast<GLFWmonitor*>(info.monitor->GetGLFWMonitor());
-	glfwSetWindowMonitor(m_window,monitor,0,0,info.width,info.height,GLFW_DONT_CARE);
+	// If the title bar is visible, we'll move the window down slightly
+	auto yOffset = info.decorated ? 30 : 0;
+	glfwSetWindowMonitor(m_window,monitor,0,yOffset,info.width,info.height,GLFW_DONT_CARE);
 	glfwSetWindowAttrib(m_window,GLFW_DECORATED,info.decorated ? GLFW_TRUE : GLFW_FALSE);
 }
 
