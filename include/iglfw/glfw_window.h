@@ -33,7 +33,8 @@ namespace GLFW
 		enum class Flags : uint32_t
 		{
 			None = 0u,
-			DebugContext = 1u
+			DebugContext = 1u,
+			DisableVSync = DebugContext<<1u // OpenGL only
 		};
 		WindowCreationInfo();
 		bool resizable;
@@ -62,42 +63,6 @@ namespace GLFW
 	};
 	class DLLGLFW Window
 	{
-	private:
-		Window(GLFWwindow *window);
-		GLFWwindow *m_window;
-		std::unique_ptr<Monitor> m_monitor;
-		WindowHandle m_handle;
-		WindowCreationInfo::API m_api = WindowCreationInfo::API::None;
-		std::function<void(Window&,Key,int,KeyState,Modifier)> m_keyCallback;
-		std::function<void(Window&)> m_refreshCallback;
-		std::function<void(Window&,Vector2i)> m_resizeCallback;
-		std::function<void(Window&,unsigned int)> m_charCallback;
-		std::function<void(Window&,unsigned int,Modifier)> m_charModsCallback;
-		std::function<void(Window&,bool)> m_cursorEnterCallback;
-		std::function<void(Window&,Vector2)> m_cursorPosCallback;
-		std::function<void(Window&,std::vector<std::string>&)> m_dropCallback;
-		std::function<void(Window&,MouseButton,KeyState,Modifier)> m_mouseButtonCallback;
-		std::function<void(Window&,Vector2)> m_scrollCallback;
-		std::function<void(Window&)> m_closeCallback;
-		std::function<void(Window&,bool)> m_focusCallback;
-		std::function<void(Window&,bool)> m_iconifyCallback;
-		std::function<void(Window&,Vector2i)> m_windowPosCallback;
-		std::function<void(Window&,Vector2i)> m_windowSizeCallback;
-		std::optional<Vector2> m_cursorPosOverride = {};
-		void KeyCallback(int key,int scancode,int action,int mods);
-		void RefreshCallback();
-		void ResizeCallback(int width,int height);
-		void CharCallback(unsigned int c);
-		void CharModsCallback(unsigned int c,int mods);
-		void CursorEnterCallback(int e);
-		void CursorPosCallback(double x,double y);
-		void DropCallback(int count,const char **paths);
-		void MouseButtonCallback(int button,int action,int mods);
-		void ScrollCallback(double xoffset,double yoffset);
-		void FocusCallback(int focused);
-		void IconifyCallback(int iconified);
-		void WindowPosCallback(int x,int y);
-		void WindowSizeCallback(int w,int h);
 	public:
 		static std::unique_ptr<Window> Create(const WindowCreationInfo &info);
 		~Window();
@@ -152,6 +117,10 @@ namespace GLFW
 		void MakeContextCurrent() const;
 		void UpdateWindow(const WindowCreationInfo &info);
 
+		// OpenGL only
+		void SetVSyncEnabled(bool enabled);
+		bool IsVSyncEnabled() const;
+
 		bool IsFocused() const;
 		bool IsIconified() const;
 		bool IsVisible() const;
@@ -161,6 +130,43 @@ namespace GLFW
 
 		void SetCursor(const Cursor &cursor);
 		void ClearCursor();
+	private:
+		Window(GLFWwindow *window);
+		GLFWwindow *m_window;
+		std::unique_ptr<Monitor> m_monitor;
+		WindowHandle m_handle;
+		WindowCreationInfo::API m_api = WindowCreationInfo::API::None;
+		WindowCreationInfo::Flags m_flags = WindowCreationInfo::Flags::None;
+		std::function<void(Window&,Key,int,KeyState,Modifier)> m_keyCallback;
+		std::function<void(Window&)> m_refreshCallback;
+		std::function<void(Window&,Vector2i)> m_resizeCallback;
+		std::function<void(Window&,unsigned int)> m_charCallback;
+		std::function<void(Window&,unsigned int,Modifier)> m_charModsCallback;
+		std::function<void(Window&,bool)> m_cursorEnterCallback;
+		std::function<void(Window&,Vector2)> m_cursorPosCallback;
+		std::function<void(Window&,std::vector<std::string>&)> m_dropCallback;
+		std::function<void(Window&,MouseButton,KeyState,Modifier)> m_mouseButtonCallback;
+		std::function<void(Window&,Vector2)> m_scrollCallback;
+		std::function<void(Window&)> m_closeCallback;
+		std::function<void(Window&,bool)> m_focusCallback;
+		std::function<void(Window&,bool)> m_iconifyCallback;
+		std::function<void(Window&,Vector2i)> m_windowPosCallback;
+		std::function<void(Window&,Vector2i)> m_windowSizeCallback;
+		std::optional<Vector2> m_cursorPosOverride = {};
+		void KeyCallback(int key,int scancode,int action,int mods);
+		void RefreshCallback();
+		void ResizeCallback(int width,int height);
+		void CharCallback(unsigned int c);
+		void CharModsCallback(unsigned int c,int mods);
+		void CursorEnterCallback(int e);
+		void CursorPosCallback(double x,double y);
+		void DropCallback(int count,const char **paths);
+		void MouseButtonCallback(int button,int action,int mods);
+		void ScrollCallback(double xoffset,double yoffset);
+		void FocusCallback(int focused);
+		void IconifyCallback(int iconified);
+		void WindowPosCallback(int x,int y);
+		void WindowSizeCallback(int w,int h);
 	};
 };
 REGISTER_BASIC_BITWISE_OPERATORS(GLFW::WindowCreationInfo::Flags)

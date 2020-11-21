@@ -137,6 +137,10 @@ void Window::MakeContextCurrent() const
 	if(GetAPI() == WindowCreationInfo::API::None)
 		return;
 	glfwMakeContextCurrent(m_window);
+	if(umath::is_flag_set(m_flags,WindowCreationInfo::Flags::DisableVSync))
+		glfwSwapInterval(0);
+	else
+		glfwSwapInterval(1);
 }
 
 const GLFWwindow *Window::GetGLFWWindow() const {return m_window;}
@@ -184,6 +188,13 @@ void Window::SetStickyKeysEnabled(bool b) {return glfwSetInputMode(const_cast<GL
 bool Window::GetStickyKeysEnabled() const {return (glfwGetInputMode(const_cast<GLFWwindow*>(GetGLFWWindow()),GLFW_STICKY_KEYS) == GLFW_TRUE) ? true : false;}
 void Window::SetStickyMouseButtonsEnabled(bool b) {return glfwSetInputMode(const_cast<GLFWwindow*>(GetGLFWWindow()),GLFW_STICKY_MOUSE_BUTTONS,(b == true) ? GLFW_TRUE : GLFW_FALSE);}
 bool Window::GetStickyMouseButtonsEnabled() const {return (glfwGetInputMode(const_cast<GLFWwindow*>(GetGLFWWindow()),GLFW_STICKY_MOUSE_BUTTONS) == GLFW_TRUE) ? true : false;}
+
+void Window::SetVSyncEnabled(bool enabled)
+{
+	umath::set_flag(m_flags,WindowCreationInfo::Flags::DisableVSync,!enabled);
+	glfwSwapInterval(enabled ? 1 : 0);
+}
+bool Window::IsVSyncEnabled() const {return !umath::is_flag_set(m_flags,WindowCreationInfo::Flags::DisableVSync);}
 
 void Window::SwapBuffers() const {glfwSwapBuffers(const_cast<GLFWwindow*>(GetGLFWWindow()));}
 void Window::SetWindowTitle(const std::string &title) {glfwSetWindowTitle(const_cast<GLFWwindow*>(GetGLFWWindow()),title.c_str());}
@@ -393,5 +404,6 @@ std::unique_ptr<Window> Window::Create(const WindowCreationInfo &info)
 	});
 	glfwSetWindowUserPointer(window,vkWindow.get());
 	vkWindow->m_api = info.api;
+	vkWindow->m_flags = info.flags;
 	return vkWindow;
 }
