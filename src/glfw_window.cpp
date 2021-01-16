@@ -3,6 +3,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 #include "iglfw/glfw_window.h"
+#include <GLFW/glfw3native.h>
 
 using namespace GLFW;
 
@@ -263,6 +264,17 @@ void Window::SetCursor(const Cursor &cursor)
 	glfwSetCursor(const_cast<GLFWwindow*>(GetGLFWWindow()),const_cast<GLFWcursor*>(c));
 }
 void Window::ClearCursor() {glfwSetCursor(const_cast<GLFWwindow*>(GetGLFWWindow()),nullptr);}
+
+#ifdef _WIN32
+HWND Window::GetWin32Handle() const
+{
+	return glfwGetWin32Window(const_cast<GLFWwindow*>(GetGLFWWindow()));
+}
+#endif
+HGLRC Window::GetOpenGLContextHandle() const
+{
+	return glfwGetWGLContext(const_cast<GLFWwindow*>(GetGLFWWindow()));
+}
 
 std::unique_ptr<Window> Window::Create(const WindowCreationInfo &info)
 {

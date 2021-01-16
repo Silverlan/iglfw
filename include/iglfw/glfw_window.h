@@ -117,6 +117,11 @@ namespace GLFW
 		void MakeContextCurrent() const;
 		void UpdateWindow(const WindowCreationInfo &info);
 
+#ifdef _WIN32
+		HWND GetWin32Handle() const;
+#endif
+		HGLRC GetOpenGLContextHandle() const;
+
 		// OpenGL only
 		void SetVSyncEnabled(bool enabled);
 		bool IsVSyncEnabled() const;
