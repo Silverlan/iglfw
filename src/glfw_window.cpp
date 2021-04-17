@@ -27,11 +27,6 @@ WindowCreationInfo::WindowCreationInfo()
 
 Window::Window(GLFWwindow *window)
 	: m_handle(new PtrWindow(this)),m_window(window),
-	m_keyCallback(nullptr),m_refreshCallback(nullptr),m_resizeCallback(nullptr),
-	m_charCallback(nullptr),m_charModsCallback(nullptr),m_cursorEnterCallback(nullptr),
-	m_cursorPosCallback(nullptr),m_dropCallback(nullptr),m_mouseButtonCallback(nullptr),
-	m_scrollCallback(nullptr),m_closeCallback(nullptr),m_focusCallback(nullptr),
-	m_iconifyCallback(nullptr),m_windowPosCallback(nullptr),m_windowSizeCallback(nullptr),
 	m_monitor(nullptr)
 {
 	auto *monitor = glfwGetWindowMonitor(m_window);
@@ -51,82 +46,82 @@ void Window::Remove() {delete this;}
 
 void Window::KeyCallback(int key,int scancode,int action,int mods)
 {
-	if(m_keyCallback != nullptr)
-		m_keyCallback(*this,static_cast<Key>(key),scancode,static_cast<KeyState>(action),static_cast<Modifier>(mods));
+	if(m_callbackInterface.keyCallback != nullptr)
+		m_callbackInterface.keyCallback(*this,static_cast<Key>(key),scancode,static_cast<KeyState>(action),static_cast<Modifier>(mods));
 }
 
 void Window::RefreshCallback()
 {
-	if(m_refreshCallback != nullptr)
-		m_refreshCallback(*this);
+	if(m_callbackInterface.refreshCallback != nullptr)
+		m_callbackInterface.refreshCallback(*this);
 }
 
 void Window::ResizeCallback(int width,int height)
 {
-	if(m_resizeCallback != nullptr)
-		m_resizeCallback(*this,Vector2i(width,height));
+	if(m_callbackInterface.resizeCallback != nullptr)
+		m_callbackInterface.resizeCallback(*this,Vector2i(width,height));
 }
 
 void Window::CharCallback(unsigned int c)
 {
-	if(m_charCallback != nullptr)
-		m_charCallback(*this,c);
+	if(m_callbackInterface.charCallback != nullptr)
+		m_callbackInterface.charCallback(*this,c);
 }
 void Window::CharModsCallback(unsigned int c,int mods)
 {
-	if(m_charModsCallback != nullptr)
-		m_charModsCallback(*this,c,static_cast<Modifier>(mods));
+	if(m_callbackInterface.charModsCallback != nullptr)
+		m_callbackInterface.charModsCallback(*this,c,static_cast<Modifier>(mods));
 }
 void Window::CursorEnterCallback(int e)
 {
-	if(m_cursorEnterCallback != nullptr)
-		m_cursorEnterCallback(*this,(e == GLFW_TRUE) ? true : false);
+	if(m_callbackInterface.cursorEnterCallback != nullptr)
+		m_callbackInterface.cursorEnterCallback(*this,(e == GLFW_TRUE) ? true : false);
 }
 void Window::CursorPosCallback(double x,double y)
 {
-	if(m_cursorPosCallback != nullptr)
-		m_cursorPosCallback(*this,Vector2(x,y));
+	if(m_callbackInterface.cursorPosCallback != nullptr)
+		m_callbackInterface.cursorPosCallback(*this,Vector2(x,y));
 }
 void Window::DropCallback(int count,const char **paths)
 {
-	if(m_dropCallback != nullptr)
+	if(m_callbackInterface.dropCallback != nullptr)
 	{
 		std::vector<std::string> files;
 		files.reserve(count);
 		for(auto i=decltype(count){0};i<count;++i)
 			files.push_back(paths[i]);
-		m_dropCallback(*this,files);
+		m_callbackInterface.dropCallback(*this,files);
 	}
 }
 void Window::MouseButtonCallback(int button,int action,int mods)
 {
-	if(m_mouseButtonCallback != nullptr)
-		m_mouseButtonCallback(*this,static_cast<MouseButton>(button),static_cast<KeyState>(action),static_cast<Modifier>(mods));
+	if(m_callbackInterface.mouseButtonCallback != nullptr)
+		m_callbackInterface.mouseButtonCallback(*this,static_cast<MouseButton>(button),static_cast<KeyState>(action),static_cast<Modifier>(mods));
 }
 void Window::ScrollCallback(double xoffset,double yoffset)
 {
-	if(m_scrollCallback != nullptr)
-		m_scrollCallback(*this,Vector2(xoffset,yoffset));
+	if(m_callbackInterface.scrollCallback != nullptr)
+		m_callbackInterface.scrollCallback(*this,Vector2(xoffset,yoffset));
 }
 void Window::FocusCallback(int focused)
 {
-	if(m_focusCallback != nullptr)
-		m_focusCallback(*this,(focused == GLFW_TRUE) ? true : false);
+	if(m_callbackInterface.focusCallback != nullptr)
+		m_callbackInterface.focusCallback(*this,(focused == GLFW_TRUE) ? true : false);
 }
 void Window::IconifyCallback(int iconified)
 {
-	if(m_iconifyCallback != nullptr)
-		m_iconifyCallback(*this,(iconified == GLFW_TRUE) ? true : false);
+	if(m_callbackInterface.iconifyCallback != nullptr)
+		m_callbackInterface.iconifyCallback(*this,(iconified == GLFW_TRUE) ? true : false);
 }
 void Window::WindowPosCallback(int x,int y)
 {
-	if(m_windowPosCallback != nullptr)
-		m_windowPosCallback(*this,Vector2i(x,y));
+	if(m_callbackInterface.windowPosCallback != nullptr)
+		m_callbackInterface.windowPosCallback(*this,Vector2i(x,y));
 }
 void Window::WindowSizeCallback(int w,int h)
 {
-	if(m_windowSizeCallback != nullptr)
-		m_windowSizeCallback(*this,Vector2i(w,h));
+	if(m_callbackInterface.windowSizeCallback != nullptr)
+		m_callbackInterface.windowSizeCallback(*this,Vector2i(w,h));
 }
 
 const Monitor *Window::GetMonitor() const
@@ -149,21 +144,23 @@ void Window::MakeContextCurrent() const
 
 const GLFWwindow *Window::GetGLFWWindow() const {return m_window;}
 
-void Window::SetKeyCallback(const std::function<void(Window&,Key,int,KeyState,Modifier)> &callback) {m_keyCallback = callback;}
-void Window::SetRefreshCallback(const std::function<void(Window&)> &callback) {m_refreshCallback = callback;}
-void Window::SetResizeCallback(const std::function<void(Window&,Vector2i)> &callback) {m_resizeCallback = callback;}
-void Window::SetCharCallback(const std::function<void(Window&,unsigned int)> &callback) {m_charCallback = callback;}
-void Window::SetCharModsCallback(const std::function<void(Window&,unsigned int,Modifier)> &callback) {m_charModsCallback = callback;}
-void Window::SetCursorEnterCallback(const std::function<void(Window&,bool)> &callback) {m_cursorEnterCallback = callback;}
-void Window::SetCursorPosCallback(const std::function<void(Window&,Vector2)> &callback) {m_cursorPosCallback = callback;}
-void Window::SetDropCallback(const std::function<void(Window&,std::vector<std::string>&)> &callback) {m_dropCallback = callback;}
-void Window::SetMouseButtonCallback(const std::function<void(Window&,MouseButton,KeyState,Modifier)> &callback) {m_mouseButtonCallback = callback;}
-void Window::SetScrollCallback(const std::function<void(Window&,Vector2)> &callback) {m_scrollCallback = callback;}
-void Window::SetCloseCallback(const std::function<void(Window&)> &callback) {m_closeCallback = callback;}
-void Window::SetFocusCallback(const std::function<void(Window&,bool)> &callback) {m_focusCallback = callback;}
-void Window::SetIconifyCallback(const std::function<void(Window&,bool)> &callback) {m_iconifyCallback = callback;}
-void Window::SetWindowPosCallback(const std::function<void(Window&,Vector2i)> &callback) {m_windowPosCallback = callback;}
-void Window::SetWindowSizeCallback(const std::function<void(Window&,Vector2i)> &callback) {m_windowSizeCallback = callback;}
+void Window::SetKeyCallback(const std::function<void(Window&,Key,int,KeyState,Modifier)> &callback) {m_callbackInterface.keyCallback = callback;}
+void Window::SetRefreshCallback(const std::function<void(Window&)> &callback) {m_callbackInterface.refreshCallback = callback;}
+void Window::SetResizeCallback(const std::function<void(Window&,Vector2i)> &callback) {m_callbackInterface.resizeCallback = callback;}
+void Window::SetCharCallback(const std::function<void(Window&,unsigned int)> &callback) {m_callbackInterface.charCallback = callback;}
+void Window::SetCharModsCallback(const std::function<void(Window&,unsigned int,Modifier)> &callback) {m_callbackInterface.charModsCallback = callback;}
+void Window::SetCursorEnterCallback(const std::function<void(Window&,bool)> &callback) {m_callbackInterface.cursorEnterCallback = callback;}
+void Window::SetCursorPosCallback(const std::function<void(Window&,Vector2)> &callback) {m_callbackInterface.cursorPosCallback = callback;}
+void Window::SetDropCallback(const std::function<void(Window&,std::vector<std::string>&)> &callback) {m_callbackInterface.dropCallback = callback;}
+void Window::SetMouseButtonCallback(const std::function<void(Window&,MouseButton,KeyState,Modifier)> &callback) {m_callbackInterface.mouseButtonCallback = callback;}
+void Window::SetScrollCallback(const std::function<void(Window&,Vector2)> &callback) {m_callbackInterface.scrollCallback = callback;}
+void Window::SetCloseCallback(const std::function<void(Window&)> &callback) {m_callbackInterface.closeCallback = callback;}
+void Window::SetFocusCallback(const std::function<void(Window&,bool)> &callback) {m_callbackInterface.focusCallback = callback;}
+void Window::SetIconifyCallback(const std::function<void(Window&,bool)> &callback) {m_callbackInterface.iconifyCallback = callback;}
+void Window::SetWindowPosCallback(const std::function<void(Window&,Vector2i)> &callback) {m_callbackInterface.windowPosCallback = callback;}
+void Window::SetWindowSizeCallback(const std::function<void(Window&,Vector2i)> &callback) {m_callbackInterface.windowSizeCallback = callback;}
+void Window::SetCallbacks(const CallbackInterface &callbacks) {m_callbackInterface = callbacks;}
+const CallbackInterface &Window::GetCallbacks() const {return m_callbackInterface;}
 
 bool Window::ShouldClose() const {return (glfwWindowShouldClose(const_cast<GLFWwindow*>(GetGLFWWindow())) == GLFW_TRUE) ? true : false;}
 void Window::SetShouldClose(bool b) {glfwSetWindowShouldClose(const_cast<GLFWwindow*>(GetGLFWWindow()),(b == true) ? GLFW_TRUE : GLFW_FALSE);}
@@ -321,7 +318,7 @@ std::unique_ptr<Window> Window::Create(const WindowCreationInfo &info)
 		glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT,GLFW_TRUE);
 
 	GLFWmonitor *monitor = nullptr;
-	if(info.monitor != nullptr)
+	if(info.monitor.has_value())
 		monitor = const_cast<GLFWmonitor*>(info.monitor->GetGLFWMonitor());
 	auto *window = glfwCreateWindow(info.width,info.height,info.title.c_str(),monitor,nullptr);
 	if(window == nullptr)
@@ -389,9 +386,9 @@ std::unique_ptr<Window> Window::Create(const WindowCreationInfo &info)
 	});
 	glfwSetWindowCloseCallback(window,[](GLFWwindow *window) {
 		auto *vkWindow = static_cast<Window*>(glfwGetWindowUserPointer(window));
-		if(vkWindow == nullptr || vkWindow->m_closeCallback == nullptr)
+		if(vkWindow == nullptr || vkWindow->m_callbackInterface.closeCallback == nullptr)
 			return;
-		vkWindow->m_closeCallback(*vkWindow);
+		vkWindow->m_callbackInterface.closeCallback(*vkWindow);
 	});
 	glfwSetWindowFocusCallback(window,[](GLFWwindow *window,int focused) {
 		auto *vkWindow = static_cast<Window*>(glfwGetWindowUserPointer(window));

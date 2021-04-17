@@ -57,10 +57,30 @@ namespace GLFW
 		std::string title;
 		uint32_t width;
 		uint32_t height;
-		std::unique_ptr<Monitor> monitor;
+		std::optional<Monitor> monitor {};
 		API api = API::None;
 		Flags flags = Flags::None;
 	};
+
+	struct DLLGLFW CallbackInterface
+	{
+		std::function<void(Window&,Key,int,KeyState,Modifier)> keyCallback = nullptr;
+		std::function<void(Window&)> refreshCallback = nullptr;
+		std::function<void(Window&,Vector2i)> resizeCallback = nullptr;
+		std::function<void(Window&,unsigned int)> charCallback = nullptr;
+		std::function<void(Window&,unsigned int,Modifier)> charModsCallback = nullptr;
+		std::function<void(Window&,bool)> cursorEnterCallback = nullptr;
+		std::function<void(Window&,Vector2)> cursorPosCallback = nullptr;
+		std::function<void(Window&,std::vector<std::string>&)> dropCallback = nullptr;
+		std::function<void(Window&,MouseButton,KeyState,Modifier)> mouseButtonCallback = nullptr;
+		std::function<void(Window&,Vector2)> scrollCallback = nullptr;
+		std::function<void(Window&)> closeCallback = nullptr;
+		std::function<void(Window&,bool)> focusCallback = nullptr;
+		std::function<void(Window&,bool)> iconifyCallback = nullptr;
+		std::function<void(Window&,Vector2i)> windowPosCallback = nullptr;
+		std::function<void(Window&,Vector2i)> windowSizeCallback = nullptr;
+	};
+
 	class DLLGLFW Window
 	{
 	public:
@@ -69,6 +89,7 @@ namespace GLFW
 		const GLFWwindow *GetGLFWWindow() const;
 		WindowHandle GetHandle();
 		void Remove();
+
 		void SetKeyCallback(const std::function<void(Window&,Key,int,KeyState,Modifier)> &callback);
 		void SetRefreshCallback(const std::function<void(Window&)> &callback);
 		void SetResizeCallback(const std::function<void(Window&,Vector2i)> &callback);
@@ -84,6 +105,9 @@ namespace GLFW
 		void SetIconifyCallback(const std::function<void(Window&,bool)> &callback);
 		void SetWindowPosCallback(const std::function<void(Window&,Vector2i)> &callback);
 		void SetWindowSizeCallback(const std::function<void(Window&,Vector2i)> &callback);
+		void SetCallbacks(const CallbackInterface &callbacks);
+		const CallbackInterface &GetCallbacks() const;
+
 		bool ShouldClose() const;
 		void SetShouldClose(bool b);
 		KeyState GetKeyState(Key key);
@@ -92,6 +116,7 @@ namespace GLFW
 		void SetClipboardString(const std::string &str);
 		Vector2 GetCursorPos() const;
 		void SetCursorPosOverride(const Vector2 &pos);
+		const std::optional<Vector2> &GetCursorPosOverride() const {return m_cursorPosOverride;}
 		void ClearCursorPosOverride();
 		void SetCursorPos(const Vector2 &pos);
 		void SetCursorInputMode(CursorMode mode);
@@ -142,21 +167,7 @@ namespace GLFW
 		WindowHandle m_handle;
 		WindowCreationInfo::API m_api = WindowCreationInfo::API::None;
 		WindowCreationInfo::Flags m_flags = WindowCreationInfo::Flags::None;
-		std::function<void(Window&,Key,int,KeyState,Modifier)> m_keyCallback;
-		std::function<void(Window&)> m_refreshCallback;
-		std::function<void(Window&,Vector2i)> m_resizeCallback;
-		std::function<void(Window&,unsigned int)> m_charCallback;
-		std::function<void(Window&,unsigned int,Modifier)> m_charModsCallback;
-		std::function<void(Window&,bool)> m_cursorEnterCallback;
-		std::function<void(Window&,Vector2)> m_cursorPosCallback;
-		std::function<void(Window&,std::vector<std::string>&)> m_dropCallback;
-		std::function<void(Window&,MouseButton,KeyState,Modifier)> m_mouseButtonCallback;
-		std::function<void(Window&,Vector2)> m_scrollCallback;
-		std::function<void(Window&)> m_closeCallback;
-		std::function<void(Window&,bool)> m_focusCallback;
-		std::function<void(Window&,bool)> m_iconifyCallback;
-		std::function<void(Window&,Vector2i)> m_windowPosCallback;
-		std::function<void(Window&,Vector2i)> m_windowSizeCallback;
+		CallbackInterface m_callbackInterface {};
 		std::optional<Vector2> m_cursorPosOverride = {};
 		void KeyCallback(int key,int scancode,int action,int mods);
 		void RefreshCallback();
