@@ -144,8 +144,8 @@ namespace GLFW
 
 #ifdef _WIN32
 		HWND GetWin32Handle() const;
-#endif
 		HGLRC GetOpenGLContextHandle() const;
+#endif
 
 		// OpenGL only
 		void SetVSyncEnabled(bool enabled);

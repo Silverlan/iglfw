@@ -270,11 +270,11 @@ HWND Window::GetWin32Handle() const
 {
 	return glfwGetWin32Window(const_cast<GLFWwindow*>(GetGLFWWindow()));
 }
-#endif
 HGLRC Window::GetOpenGLContextHandle() const
 {
 	return glfwGetWGLContext(const_cast<GLFWwindow*>(GetGLFWWindow()));
 }
+#endif
 
 std::unique_ptr<Window> Window::Create(const WindowCreationInfo &info)
 {
