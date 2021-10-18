@@ -40,6 +40,11 @@ jobs:
         run: |
           git submodule update --init --recursive
           
+      - name: Define glfw CMake Variables
+        uses: Silverlan/common_actions/define_cmake_var@actions
+        with:
+          cmake_var: '-DGLFW_DLL'
+          
       - name: Build submodule - glfw
         uses: Silverlan/common_actions/build_submodule@actions
         with:
