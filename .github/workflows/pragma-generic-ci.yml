@@ -49,7 +49,7 @@ jobs:
           build_target: 'src/glfw'
           cmake_var: 'DEPENDENCY_GLFW_INCLUDE'
           cmake_var_lib: 'DEPENDENCY_GLFW_LIBRARY'
-          lib_name: 'src/${{ matrix.config.build_type }}/glfw3'
+          lib_name: 'src/${{ matrix.config.build_type }}/glfw3dll'
           
       - name: Download common external libs
         uses: Silverlan/common_actions/get_common_external_libs@actions
