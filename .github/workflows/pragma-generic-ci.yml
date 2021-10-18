@@ -45,7 +45,7 @@ jobs:
           repo: 'https://github.com/glfw/glfw.git'
           repo_name: 'glfw'
           repo_branch: '3.3-stable'
-          build_target: src/glfw
+          build_target: 'src/glfw'
           cmake_var: 'DEPENDENCY_GLFW_INCLUDE'
           cmake_var_lib: 'DEPENDENCY_GLFW_LIBRARY'
           
