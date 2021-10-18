@@ -53,8 +53,9 @@ jobs:
         uses: Silverlan/common_actions/get_common_external_libs@actions
           
       - name: CMake Build
-        uses: Silverlan/common_actions/build_cmake@main
+        uses: Silverlan/common_actions/build_cmake@actions
         with:
+          build_target: 'iglfw'
           build_type: ${{ matrix.config.build_type }}
           build_generator: ${{ matrix.config.generators }}
           cmake_definitions: ${{ env.shared_cmake_definitions }} -DCMAKE_BUILD_TYPE=${{ matrix.config.build_type }}
