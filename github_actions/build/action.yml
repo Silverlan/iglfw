@@ -25,7 +25,7 @@ runs:
             repo: 'Silverlan/iglfw'
             repo_name: 'iglfw'
             cmake_var: 'DEPENDENCY_IGLFW_INCLUDE'
-            dir: 'external_libs/iglfw'
+            dir: 'external_libs'
 
     - name: Build submodule - glfw
       uses: Silverlan/common_actions/build_submodule@main
