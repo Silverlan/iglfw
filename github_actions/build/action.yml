@@ -1,0 +1,51 @@
+name: Build
+description: 'Build library'
+inputs:
+  root_dir:
+    description: 'Root directory'
+    required: true
+  should_checkout:
+    description: 'Checkout the core library?'
+    required: true
+    default: '1'
+runs:
+  using: "composite"
+  steps:
+    - name: Initialize Env
+      id: init-env
+      uses: Silverlan/common_actions/set_common_env_vars@main
+      
+    - uses: ChristopherHX/conditional@b4a9649204f81002ec9a4ef7d4bf7d6b2ab7fa55
+      name: CMake Build
+      with:
+        if: ${{inputs.should_checkout == '1'}}
+        step: |
+          uses: Silverlan/common_actions/get_submodule@main
+          with:
+            repo: '${{ github.repository }}'
+            repo_name: '${{ github.event.repository.name }}'
+            cmake_var: 'DEPENDENCY_IGLFW_INCLUDE'
+            dir: 'external_libs'
+
+    - name: Build submodule - glfw
+      uses: Silverlan/common_actions/build_submodule@main
+      with:
+        repo: 'https://github.com/glfw/glfw.git'
+        repo_name: 'glfw'
+        repo_branch: '3.3-stable'
+        build_target: 'src/glfw'
+        cmake_var: 'DEPENDENCY_GLFW_INCLUDE'
+        cmake_var_lib: 'DEPENDENCY_GLFW_LIBRARY'
+        cmake_definitions_tmp: '-DBUILD_SHARED_LIBS=ON'
+        lib_name: 'src/${{ matrix.config.build_type }}/glfw3dll'
+
+    - name: Download common external libs
+      uses: Silverlan/common_actions/get_common_external_libs@main
+
+    - uses: Silverlan/common_actions/build_cmake@main
+      name: CMake Build
+      with:
+        build_type: ${{ matrix.config.build_type }}
+        build_generator: ${{ matrix.config.generators }}
+        cmake_definitions: ${{ env.cmake_definitions }}
+        build_target: iglfw
