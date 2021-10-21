@@ -8,6 +8,10 @@ inputs:
     description: 'Checkout the core library?'
     required: true
     default: '1'
+  dir:
+    description: 'Library directory'
+    required: true
+    default: 'external_libs/iglfw'
 runs:
   using: "composite"
   steps:
@@ -49,5 +53,5 @@ runs:
         build_generator: ${{ matrix.config.generators }}
         cmake_var: 'DEPENDENCY_IGLFW_LIBRARY'
         build_target: iglfw
-        build_dir: '${{ matrix.config.build_dir }}/external_libs/iglfw'
-        cmake_script_location: 'external_libs/iglfw'
+        build_dir: '${{ matrix.config.build_dir }}/${{ inputs.dir }}'
+        cmake_script_location: '${{ inputs.dir }}'
