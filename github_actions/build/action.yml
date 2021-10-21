@@ -22,10 +22,10 @@ runs:
         step: |
           uses: Silverlan/common_actions/get_submodule@main
           with:
-            repo: '${{ github.repository }}'
-            repo_name: '${{ github.event.repository.name }}'
+            repo: 'Silverlan/iglfw'
+            repo_name: 'iglfw'
             cmake_var: 'DEPENDENCY_IGLFW_INCLUDE'
-            dir: 'external_libs/${{ github.event.repository.name }}'
+            dir: 'external_libs/iglfw'
 
     - name: Build submodule - glfw
       uses: Silverlan/common_actions/build_submodule@main
@@ -49,5 +49,5 @@ runs:
         build_generator: ${{ matrix.config.generators }}
         cmake_var: 'DEPENDENCY_IGLFW_LIBRARY'
         build_target: iglfw
-        build_dir: '${{ matrix.config.build_dir }}/external_libs/${{ github.event.repository.name }}'
-        cmake_script_location: '${{ env.GA_ROOT_DIR }}/external_libs/${{ github.event.repository.name }}'
+        build_dir: '${{ matrix.config.build_dir }}/external_libs/iglfw'
+        cmake_script_location: '${{ env.GA_ROOT_DIR }}/external_libs/iglfw'
