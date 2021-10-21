@@ -42,7 +42,7 @@ runs:
     - name: Download common external libs
       uses: Silverlan/common_actions/get_common_external_libs@main
 
-    - uses: Silverlan/common_actions/build_cmake@actions
+    - uses: Silverlan/common_actions/build_cmake@main
       name: CMake Build
       with:
         build_type: ${{ matrix.config.build_type }}
