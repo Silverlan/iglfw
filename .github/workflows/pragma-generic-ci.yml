@@ -47,10 +47,11 @@ jobs:
           
       - name: Build
         id: build
-        uses: Silverlan/iglfw/github_actions/build@master
+        uses: Silverlan/iglfw/github_actions/build@actions
         with:
           root_dir: "${{ env.GA_ROOT_DIR }}"
           should_checkout: "0"
+          dir: '.'
           
       - name: Upload binaries
         uses: Silverlan/common_actions/upload_build_binaries@main
