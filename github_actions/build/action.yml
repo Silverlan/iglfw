@@ -50,4 +50,4 @@ runs:
         cmake_var: 'DEPENDENCY_IGLFW_LIBRARY'
         build_target: iglfw
         build_dir: '${{ matrix.config.build_dir }}/external_libs/iglfw'
-        cmake_script_location: '${{ env.GA_ROOT_DIR }}/external_libs/iglfw'
+        cmake_script_location: 'external_libs/iglfw'
