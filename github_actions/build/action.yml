@@ -47,5 +47,6 @@ runs:
       with:
         build_type: ${{ matrix.config.build_type }}
         build_generator: ${{ matrix.config.generators }}
-        cmake_definitions: ${{ env.cmake_definitions }}
+        cmake_var: 'DEPENDENCY_IGLFW_LIBRARY'
         build_target: iglfw
+        build_dir: '${{ matrix.config.build_dir }}/external_libs'
