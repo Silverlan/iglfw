@@ -41,8 +41,8 @@ runs:
           
           git clone https://github.com/glfw/glfw
           cd glfw
-          cmake ./ -DBUILD_SHARED_LIBS=ON -DCMAKE_BUILD_TYPE=RelWithDebInfo -G "Unix Makefiles"
-          cmake --build ./ --config RelWithDebugInfo
+          cmake ./ -DBUILD_SHARED_LIBS=ON -DCMAKE_BUILD_TYPE=RelWithDebInfo -G "Unix Makefiles" -B ./build
+          cmake --build ./build --config RelWithDebugInfo
           echo "--- Done ---"
         fi
 
