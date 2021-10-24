@@ -12,6 +12,9 @@
 #endif
 #include <GLFW/glfw3native.h>
 
+#undef API
+#undef None
+
 namespace GLFW
 {
 	DEFINE_BASE_HANDLE(,GLFW::Window,Window);
