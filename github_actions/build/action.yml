@@ -47,6 +47,17 @@ runs:
           sudo make
           echo "--- Done ---"
         fi
+        
+    - name: Setup glfw Build
+      id: setup-glfw-build
+      shell: bash
+      run: |
+        if [ "$RUNNER_OS" == "Linux" ]; then
+          echo "::set-output name=build-glfw-default::0"
+        else
+          echo "::set-output name=build-glfw-default::1"
+        fi
+        echo "::set-output name=runner-os::$RUNNER_OS"
 
     - name: Build submodule - glfw
       uses: Silverlan/common_actions/build_submodule@main
@@ -59,6 +70,19 @@ runs:
         cmake_var_lib: 'DEPENDENCY_GLFW_LIBRARY'
         cmake_definitions_tmp: '-DBUILD_SHARED_LIBS=ON'
         lib_name: 'src/${{ matrix.config.build_type }}/glfw3dll'
+        build: '${{ steps.setup-glfw-build.outputs.build-glfw-default }}'
+        
+    # Building glfw via CMake on Linux seems to cause weird errors on the CI machine,
+    # so we'll build it directly with make instead
+    - uses: ChristopherHX/conditional@b4a9649204f81002ec9a4ef7d4bf7d6b2ab7fa55
+      with:
+        if: ${{steps.setup-glfw-build.outputs.runner-os == 'Linux'}}
+        step: |
+          name: Build glfw
+          shell: bash
+          run: |
+            cd "${{ env.GA_ROOT_DIR }}/${{ matrix.config.build_dir }}/third_party_libs/glfw/"
+            sudo make
 
     - name: Download common external libs
       uses: Silverlan/common_actions/get_common_external_libs@main
