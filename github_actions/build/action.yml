@@ -30,6 +30,15 @@ runs:
             repo_name: 'iglfw'
             cmake_var: 'DEPENDENCY_IGLFW_INCLUDE'
             dir: 'external_libs'
+            
+    - name: Install xorg-dev
+      id: setup-vtflib-build
+      shell: bash
+      run: |
+        if [ "$RUNNER_OS" == "Linux" ]; then
+          # Required for glfw
+          sudo apt install xorg-dev
+        fi
 
     - name: Build submodule - glfw
       uses: Silverlan/common_actions/build_submodule@main
