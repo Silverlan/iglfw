@@ -38,6 +38,12 @@ runs:
         if [ "$RUNNER_OS" == "Linux" ]; then
           # Required for glfw
           sudo apt install xorg-dev
+          
+          git clone https://github.com/glfw/glfw
+          cd glfw
+          cmake ./ -DBUILD_SHARED_LIBS=ON -DCMAKE_BUILD_TYPE=RelWithDebInfo -G "Unix Makefiles"
+          cmake --build ./ --config RelWithDebugInfo
+          echo "--- Done ---"
         fi
 
     - name: Build submodule - glfw
