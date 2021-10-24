@@ -76,8 +76,6 @@ runs:
           run: |
             cd "${{ env.GA_ROOT_DIR }}/${{ matrix.config.build_dir }}/third_party_libs/glfw/"
             sudo make
-            echo "LS $PWD:"
-            ls -R
 
     - name: Download common external libs
       uses: Silverlan/common_actions/get_common_external_libs@main
