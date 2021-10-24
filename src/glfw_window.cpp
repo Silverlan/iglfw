@@ -4,8 +4,12 @@
 
 #include "iglfw/glfw_window.h"
 
+#ifdef _WIN32
 #define GLFW_EXPOSE_NATIVE_WGL
 #define GLFW_EXPOSE_NATIVE_WIN32
+#else
+#define GLFW_EXPOSE_NATIVE_X11
+#endif
 #include <GLFW/glfw3native.h>
 
 using namespace GLFW;
