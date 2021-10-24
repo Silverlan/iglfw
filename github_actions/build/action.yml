@@ -62,7 +62,7 @@ runs:
         cmake_var_lib: 'DEPENDENCY_GLFW_LIBRARY'
         cmake_definitions_tmp: '-DBUILD_SHARED_LIBS=ON'
         lib_name_windows: 'src/${{ matrix.config.build_type }}/glfw3dll'
-        lib_name_linux: 'src/${{ matrix.config.build_type }}/${{ env.GA_STATIC_LIBRARY_PREFIX }}glfw'
+        lib_name_linux: 'src/${{ env.GA_STATIC_LIBRARY_PREFIX }}glfw'
         build: '${{ steps.setup-glfw-build.outputs.build-glfw-default }}'
         
     # Building glfw via CMake on Linux seems to cause weird errors on the CI machine,
@@ -76,7 +76,7 @@ runs:
           run: |
             cd "${{ env.GA_ROOT_DIR }}/${{ matrix.config.build_dir }}/third_party_libs/glfw/"
             sudo make
-            echo "LS:"
+            echo "LS $PWD:"
             ls -R
 
     - name: Download common external libs
