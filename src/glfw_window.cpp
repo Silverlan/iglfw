@@ -259,6 +259,34 @@ void GLFW::Window::Restore() const {glfwRestoreWindow(const_cast<GLFWwindow*>(Ge
 void GLFW::Window::Show() const {glfwShowWindow(const_cast<GLFWwindow*>(GetGLFWWindow()));}
 void GLFW::Window::Hide() const {glfwHideWindow(const_cast<GLFWwindow*>(GetGLFWWindow()));}
 
+void GLFW::Window::Maximize() {glfwMaximizeWindow(const_cast<GLFWwindow*>(GetGLFWWindow()));}
+bool GLFW::Window::IsMaximized() const {return (glfwGetWindowAttrib(const_cast<GLFWwindow*>(GetGLFWWindow()),GLFW_MAXIMIZED) != GLFW_FALSE) ? true : false;}
+std::optional<GLFW::MonitorBounds> GLFW::Window::GetMonitorBounds() const
+{
+#ifdef _WIN32
+	auto hWnd = GetWin32Handle();
+	if(!hWnd)
+		return {};
+	auto monitor = MonitorFromWindow(hWnd,MONITOR_DEFAULTTONEAREST);
+	if(!monitor)
+		return {};
+	MONITORINFO info;
+	info.cbSize = sizeof(MONITORINFO);
+	if(!GetMonitorInfo(monitor,&info))
+		return {};
+	return MonitorBounds {
+		Vector2{info.rcMonitor.left,info.rcMonitor.top},
+		Vector2{info.rcMonitor.right -info.rcMonitor.left,info.rcMonitor.bottom -info.rcMonitor.top},
+
+		Vector2{info.rcWork.left,info.rcWork.top},
+		Vector2{info.rcWork.right -info.rcWork.left,info.rcWork.bottom -info.rcWork.top}
+	};
+#else
+	throw std::runtime_error{"Not yet implemented!"};
+	return {};
+#endif
+}
+
 bool GLFW::Window::IsFocused() const {return (glfwGetWindowAttrib(const_cast<GLFWwindow*>(GetGLFWWindow()),GLFW_FOCUSED) != GLFW_FALSE) ? true : false;}
 bool GLFW::Window::IsIconified() const {return (glfwGetWindowAttrib(const_cast<GLFWwindow*>(GetGLFWWindow()),GLFW_ICONIFIED) != GLFW_FALSE) ? true : false;}
 bool GLFW::Window::IsVisible() const {return (glfwGetWindowAttrib(const_cast<GLFWwindow*>(GetGLFWWindow()),GLFW_VISIBLE) != GLFW_FALSE) ? true : false;}

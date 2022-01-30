@@ -22,6 +22,15 @@ namespace GLFW
 	class Window;
 	DECLARE_BASE_HANDLE(DLLGLFW,Window,Window);
 
+	struct DLLGLFW MonitorBounds
+	{
+		Vector2 monitorPos;
+		Vector2 monitorSize;
+
+		Vector2 workPos;
+		Vector2 workSize;
+	};
+
 	struct DLLGLFW WindowCreationInfo
 	{
 		enum class API : uint8_t
@@ -137,6 +146,9 @@ namespace GLFW
 		void Restore() const;
 		void Show() const;
 		void Hide() const;
+		void Maximize();
+		bool IsMaximized() const;
+		std::optional<MonitorBounds> GetMonitorBounds() const;
 		const Monitor *GetMonitor() const;
 		WindowCreationInfo::API GetAPI() const;
 		void MakeContextCurrent() const;
