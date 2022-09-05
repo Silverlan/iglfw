@@ -136,6 +136,8 @@ namespace GLFW
 		bool GetStickyMouseButtonsEnabled() const;
 		void SwapBuffers() const;
 		void SetWindowTitle(const std::string &title);
+		// RGBA32; Recommended size is 48x48
+		void SetWindowIcon(uint32_t width,uint32_t height,const uint8_t *data);
 		Vector2i GetPos() const;
 		void SetPos(const Vector2i &pos);
 		Vector2i GetSize() const;

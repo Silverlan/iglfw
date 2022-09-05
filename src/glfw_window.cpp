@@ -207,6 +207,14 @@ bool GLFW::Window::IsVSyncEnabled() const {return !umath::is_flag_set(m_flags,Wi
 
 void GLFW::Window::SwapBuffers() const {glfwSwapBuffers(const_cast<GLFWwindow*>(GetGLFWWindow()));}
 void GLFW::Window::SetWindowTitle(const std::string &title) {glfwSetWindowTitle(const_cast<GLFWwindow*>(GetGLFWWindow()),title.c_str());}
+void GLFW::Window::SetWindowIcon(uint32_t width,uint32_t height,const uint8_t *data)
+{
+	GLFWimage iconData {};
+	iconData.width = width;
+	iconData.height = height;
+	iconData.pixels = const_cast<unsigned char*>(reinterpret_cast<const unsigned char*>(data));
+	glfwSetWindowIcon(const_cast<GLFWwindow*>(GetGLFWWindow()),1,&iconData);
+}
 
 Vector2i GLFW::Window::GetPos() const
 {
