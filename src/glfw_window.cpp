@@ -176,7 +176,13 @@ void GLFW::Window::SetShouldClose(bool b) {glfwSetWindowShouldClose(const_cast<G
 GLFW::KeyState GLFW::Window::GetKeyState(Key key) {return static_cast<KeyState>(glfwGetKey(const_cast<GLFWwindow*>(GetGLFWWindow()),static_cast<uint32_t>(key)));}
 GLFW::KeyState GLFW::Window::GetMouseButtonState(MouseButton button) {return static_cast<KeyState>(glfwGetMouseButton(const_cast<GLFWwindow*>(GetGLFWWindow()),static_cast<uint32_t>(button)));}
 
-std::string GLFW::Window::GetClipboardString() const {return glfwGetClipboardString(const_cast<GLFWwindow*>(GetGLFWWindow()));}
+std::string GLFW::Window::GetClipboardString() const
+{
+	auto *str = glfwGetClipboardString(const_cast<GLFWwindow*>(GetGLFWWindow()));
+	if(!str)
+		return {};
+	return str;
+}
 void GLFW::Window::SetClipboardString(const std::string &str) {glfwSetClipboardString(const_cast<GLFWwindow*>(GetGLFWWindow()),str.c_str());}
 
 Vector2 GLFW::Window::GetCursorPos() const
