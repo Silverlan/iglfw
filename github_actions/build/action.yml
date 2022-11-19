@@ -1,20 +1,22 @@
 name: Build
 description: 'Build library'
 inputs:
-  root_dir:
-    description: 'Root directory'
+  repo-directory:
+    description: 'Specifies source code location. If empty, source code will be downloaded to working-directory.'
     required: true
-  should_checkout:
-    description: 'Checkout the core library?'
+    default: ''
+  working-directory:
+    description: 'Working Directory'
     required: true
-    default: '1'
-  dir:
-    description: 'Library directory'
-    required: true
-    default: 'external_libs/iglfw'
+    default: '.'
 runs:
   using: "composite"
   steps:
+    - uses: Silverlan/common_actions/action_start@main
+      with:
+        name: "iglfw > build"
+        input_values: "repo-directory: ${{inputs.repo-directory}},working-directory: ${{inputs.working-directory}}"
+        
     - name: Initialize Env
       id: init-env
       uses: Silverlan/common_actions/set_common_env_vars@main
@@ -22,14 +24,13 @@ runs:
     - uses: ChristopherHX/conditional@b4a9649204f81002ec9a4ef7d4bf7d6b2ab7fa55
       name: CMake Build
       with:
-        if: ${{inputs.should_checkout == '1'}}
+        if: ${{inputs.repo-directory == ''}}
         step: |
-          uses: Silverlan/common_actions/get_submodule@main
+          uses: Silverlan/common_actions/get_submodule_simple@main
           with:
             repo: 'Silverlan/iglfw'
-            repo_name: 'iglfw'
             cmake_var: 'DEPENDENCY_IGLFW_INCLUDE'
-            dir: 'external_libs'
+            working-directory: ${{inputs.working-directory}}
             
     - name: Install xorg-dev
       id: setup-vtflib-build
@@ -51,6 +52,12 @@ runs:
         fi
         echo "::set-output name=runner-os::$RUNNER_OS"
 
+    - name: Create Paths
+      shell: bash
+      working-directory: ${{inputs.working-directory}}
+      run: |
+        mkdir -p glfw
+
     - name: Build submodule - glfw
       uses: Silverlan/common_actions/build_submodule@main
       with:
@@ -64,6 +71,8 @@ runs:
         lib_name_windows: 'src/${{ matrix.config.build_type }}/glfw3dll'
         lib_name_linux: 'src/${{ env.GA_STATIC_LIBRARY_PREFIX }}glfw'
         build: '${{ steps.setup-glfw-build.outputs.build-glfw-default }}'
+        working-directory: ${{inputs.working-directory}}
+        top_level_dir: '.'
         
     # Building glfw via CMake on Linux seems to cause weird errors on the CI machine,
     # so we'll build it directly with make instead
@@ -73,8 +82,9 @@ runs:
         step: |
           name: Build glfw
           shell: bash
+          working-directory: ${{inputs.working-directory}}/build/glfw
           run: |
-            cd "${{ env.GA_ROOT_DIR }}/${{ matrix.config.build_dir }}/third_party_libs/glfw/"
+            echo "Running make in $PWD ..."
             sudo make
 
     - name: Download common external libs
@@ -87,5 +97,9 @@ runs:
         build_generator: ${{ matrix.config.generators }}
         cmake_var: 'DEPENDENCY_IGLFW_LIBRARY'
         build_target: iglfw
-        build_dir: '${{ matrix.config.build_dir }}/${{ inputs.dir }}'
-        cmake_script_location: '${{ inputs.dir }}'
+        build_dir: './build'
+        cmake_script_location: '.'
+        working-directory: ${{inputs.working-directory}}
+
+    - uses: Silverlan/common_actions/action_end@main
+    
