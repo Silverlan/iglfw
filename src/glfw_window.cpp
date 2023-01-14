@@ -373,66 +373,64 @@ std::unique_ptr<GLFW::Window> GLFW::Window::Create(const WindowCreationInfo &inf
 	auto *window = glfwCreateWindow(info.width,info.height,info.title.c_str(),monitor,nullptr);
 	if(window == nullptr)
 		throw std::runtime_error("Unable to create GLFW Window!");
-	static auto skipCallbacks = true;
-	skipCallbacks = true; // GLFW may invoke some callbacks immediately (before we have finished initialization), we'll ignore those events.
 	auto vkWindow = std::unique_ptr<Window>(new Window(window));
 	glfwSetWindowRefreshCallback(window,[](GLFWwindow *window) {
 		auto *vkWindow = static_cast<Window*>(glfwGetWindowUserPointer(window));
-		if(vkWindow == nullptr || skipCallbacks)
+		if(vkWindow == nullptr)
 			return;
 		vkWindow->RefreshCallback();
 	});
 	glfwSetFramebufferSizeCallback(window,[](GLFWwindow *window,int width,int height) {
 		auto *vkWindow = static_cast<Window*>(glfwGetWindowUserPointer(window));
-		if(vkWindow == nullptr || skipCallbacks)
+		if(vkWindow == nullptr)
 			return;
 		vkWindow->RefreshCallback();
 	});
 	glfwSetKeyCallback(window,[](GLFWwindow *window,int key,int scancode,int action,int mods) {
 		auto *vkWindow = static_cast<Window*>(glfwGetWindowUserPointer(window));
-		if(vkWindow == nullptr || skipCallbacks)
+		if(vkWindow == nullptr)
 			return;
 		vkWindow->KeyCallback(key,scancode,action,mods);
 	});
 	glfwSetCharCallback(window,[](GLFWwindow *window,unsigned int c) {
 		auto *vkWindow = static_cast<Window*>(glfwGetWindowUserPointer(window));
-		if(vkWindow == nullptr || skipCallbacks)
+		if(vkWindow == nullptr)
 			return;
 		vkWindow->CharCallback(c);
 	});
 	glfwSetCharModsCallback(window,[](GLFWwindow *window,unsigned int c,int mods) {
 		auto *vkWindow = static_cast<Window*>(glfwGetWindowUserPointer(window));
-		if(vkWindow == nullptr || skipCallbacks)
+		if(vkWindow == nullptr)
 			return;
 		vkWindow->CharModsCallback(c,mods);
 	});
 	glfwSetCursorEnterCallback(window,[](GLFWwindow *window,int entered) {
 		auto *vkWindow = static_cast<Window*>(glfwGetWindowUserPointer(window));
-		if(vkWindow == nullptr || skipCallbacks)
+		if(vkWindow == nullptr)
 			return;
 		vkWindow->CursorEnterCallback(entered);
 	});
 	glfwSetCursorPosCallback(window,[](GLFWwindow *window,double x,double y) {
 		auto *vkWindow = static_cast<Window*>(glfwGetWindowUserPointer(window));
-		if(vkWindow == nullptr || skipCallbacks)
+		if(vkWindow == nullptr)
 			return;
 		vkWindow->CursorPosCallback(x,y);
 	});
 	glfwSetDropCallback(window,[](GLFWwindow *window,int count,const char **paths) {
 		auto *vkWindow = static_cast<Window*>(glfwGetWindowUserPointer(window));
-		if(vkWindow == nullptr || skipCallbacks)
+		if(vkWindow == nullptr)
 			return;
 		vkWindow->DropCallback(count,paths);
 	});
 	glfwSetMouseButtonCallback(window,[](GLFWwindow *window,int button,int action,int mods) {
 		auto *vkWindow = static_cast<Window*>(glfwGetWindowUserPointer(window));
-		if(vkWindow == nullptr || skipCallbacks)
+		if(vkWindow == nullptr)
 			return;
 		vkWindow->MouseButtonCallback(button,action,mods);
 	});
 	glfwSetScrollCallback(window,[](GLFWwindow *window,double x,double y) {
 		auto *vkWindow = static_cast<Window*>(glfwGetWindowUserPointer(window));
-		if(vkWindow == nullptr || skipCallbacks)
+		if(vkWindow == nullptr)
 			return;
 		vkWindow->ScrollCallback(x,y);
 	});
@@ -444,31 +442,30 @@ std::unique_ptr<GLFW::Window> GLFW::Window::Create(const WindowCreationInfo &inf
 	});
 	glfwSetWindowFocusCallback(window,[](GLFWwindow *window,int focused) {
 		auto *vkWindow = static_cast<Window*>(glfwGetWindowUserPointer(window));
-		if(vkWindow == nullptr || skipCallbacks)
+		if(vkWindow == nullptr)
 			return;
 		vkWindow->FocusCallback(focused);
 	});
 	glfwSetWindowIconifyCallback(window,[](GLFWwindow *window,int iconified) {
 		auto *vkWindow = static_cast<Window*>(glfwGetWindowUserPointer(window));
-		if(vkWindow == nullptr || skipCallbacks)
+		if(vkWindow == nullptr)
 			return;
 		vkWindow->IconifyCallback(iconified);
 	});
 	glfwSetWindowPosCallback(window,[](GLFWwindow *window,int x,int y) {
 		auto *vkWindow = static_cast<Window*>(glfwGetWindowUserPointer(window));
-		if(vkWindow == nullptr || skipCallbacks)
+		if(vkWindow == nullptr)
 			return;
 		vkWindow->WindowPosCallback(x,y);
 	});
 	glfwSetWindowSizeCallback(window,[](GLFWwindow *window,int w,int h) {
 		auto *vkWindow = static_cast<Window*>(glfwGetWindowUserPointer(window));
-		if(vkWindow == nullptr || skipCallbacks)
+		if(vkWindow == nullptr)
 			return;
 		vkWindow->WindowSizeCallback(w,h);
 	});
 	glfwSetWindowUserPointer(window,vkWindow.get());
 	vkWindow->m_api = info.api;
 	vkWindow->m_flags = info.flags;
-	skipCallbacks = false;
 	return vkWindow;
 }
