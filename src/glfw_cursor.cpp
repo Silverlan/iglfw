@@ -6,33 +6,28 @@
 
 using namespace GLFW;
 
-DEFINE_BASE_HANDLE(,Cursor,Cursor);
+DEFINE_BASE_HANDLE(, Cursor, Cursor);
 
-Cursor::Cursor(GLFWcursor *cursor)
-	: m_handle(new PtrCursor(this)),m_cursor(cursor)
-{}
+Cursor::Cursor(GLFWcursor *cursor) : m_handle(new PtrCursor(this)), m_cursor(cursor) {}
 
-Cursor::~Cursor()
-{
-	glfwDestroyCursor(m_cursor);
-}
+Cursor::~Cursor() { glfwDestroyCursor(m_cursor); }
 
-CursorHandle Cursor::GetHandle() {return m_handle;}
+CursorHandle Cursor::GetHandle() { return m_handle; }
 
-void Cursor::Remove() {delete this;}
+void Cursor::Remove() { delete this; }
 
-const GLFWcursor *Cursor::GetGLFWCursor() const {return m_cursor;}
+const GLFWcursor *Cursor::GetGLFWCursor() const { return m_cursor; }
 
 ////////////////////////
 
-std::unique_ptr<Cursor> Cursor::Create(uint32_t width,uint32_t height,unsigned char *data,const Vector2i &hotSpot)
+std::unique_ptr<Cursor> Cursor::Create(uint32_t width, uint32_t height, unsigned char *data, const Vector2i &hotSpot)
 {
 	GLFWimage image {};
 	image.width = width;
 	image.height = height;
 	image.pixels = data;
 
-	auto *cursor = glfwCreateCursor(&image,hotSpot.x,hotSpot.y);
+	auto *cursor = glfwCreateCursor(&image, hotSpot.x, hotSpot.y);
 	return std::unique_ptr<Cursor>(new Cursor(cursor));
 }
 

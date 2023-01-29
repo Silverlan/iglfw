@@ -8,9 +8,9 @@
 #ifdef _WIN32
 #include <Windows.h>
 #endif
-#pragma warning(disable: 4005)
+#pragma warning(disable : 4005)
 #include <GLFW/glfw3.h>
-#pragma warning(default: 4005)
+#pragma warning(default : 4005)
 #include "glfw_definitions.h"
 
 #endif

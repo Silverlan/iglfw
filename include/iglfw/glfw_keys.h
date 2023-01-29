@@ -9,10 +9,8 @@
 #include <stdint.h>
 #include <mathutil/umath.h>
 
-namespace GLFW
-{
-	enum class DLLGLFW Key : int32_t
-	{
+namespace GLFW {
+	enum class DLLGLFW Key : int32_t {
 		Unknown = GLFW_KEY_UNKNOWN,
 		Space = GLFW_KEY_SPACE,
 		Apostrophe = GLFW_KEY_APOSTROPHE,
@@ -138,8 +136,7 @@ namespace GLFW
 	};
 	REGISTER_BASIC_ARITHMETIC_OPERATORS(Key);
 
-	enum class DLLGLFW MouseButton : uint32_t
-	{
+	enum class DLLGLFW MouseButton : uint32_t {
 		N1 = GLFW_MOUSE_BUTTON_1,
 		N2 = GLFW_MOUSE_BUTTON_2,
 		N3 = GLFW_MOUSE_BUTTON_3,
@@ -155,36 +152,13 @@ namespace GLFW
 	};
 	REGISTER_BASIC_ARITHMETIC_OPERATORS(MouseButton);
 
-	enum class DLLGLFW KeyState : uint32_t
-	{
-		Invalid = std::numeric_limits<uint32_t>::max(),
-		Press = GLFW_PRESS,
-		Release = GLFW_RELEASE,
-		Repeat = GLFW_REPEAT,
-		Held = Repeat +1
-	};
+	enum class DLLGLFW KeyState : uint32_t { Invalid = std::numeric_limits<uint32_t>::max(), Press = GLFW_PRESS, Release = GLFW_RELEASE, Repeat = GLFW_REPEAT, Held = Repeat + 1 };
 	REGISTER_BASIC_ARITHMETIC_OPERATORS(KeyState);
 
-	enum class DLLGLFW Modifier : uint32_t
-	{
-		None = 0,
-		Shift = GLFW_MOD_SHIFT,
-		Control = GLFW_MOD_CONTROL,
-		Alt = GLFW_MOD_ALT,
-		Super = GLFW_MOD_SUPER,
-		AxisInput = Super<<1,
-		AxisPress = AxisInput<<1,
-		AxisRelease = AxisPress<<1,
-		AxisNegative = AxisRelease<<1
-	};
+	enum class DLLGLFW Modifier : uint32_t { None = 0, Shift = GLFW_MOD_SHIFT, Control = GLFW_MOD_CONTROL, Alt = GLFW_MOD_ALT, Super = GLFW_MOD_SUPER, AxisInput = Super << 1, AxisPress = AxisInput << 1, AxisRelease = AxisPress << 1, AxisNegative = AxisRelease << 1 };
 	REGISTER_BASIC_ARITHMETIC_OPERATORS(Modifier);
 
-	enum class DLLGLFW InputMode : uint32_t
-	{
-		Cursor = GLFW_CURSOR,
-		StickyKeys = GLFW_STICKY_KEYS,
-		StickyMouseButtons = GLFW_STICKY_MOUSE_BUTTONS
-	};
+	enum class DLLGLFW InputMode : uint32_t { Cursor = GLFW_CURSOR, StickyKeys = GLFW_STICKY_KEYS, StickyMouseButtons = GLFW_STICKY_MOUSE_BUTTONS };
 	REGISTER_BASIC_ARITHMETIC_OPERATORS(InputMode);
 }
 

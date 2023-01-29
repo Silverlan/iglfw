@@ -11,15 +11,13 @@
 #include <mathutil/uvec.h>
 #include <mathutil/color.h>
 
-namespace GLFW
-{
-	class DLLGLFW Monitor
-	{
-	public:
+namespace GLFW {
+	class DLLGLFW Monitor {
+	  public:
 		using VideoMode = GLFWvidmode;
-	private:
+	  private:
 		GLFWmonitor *m_monitor;
-	public:
+	  public:
 		Monitor(GLFWmonitor *monitor);
 		~Monitor();
 		const GLFWmonitor *GetGLFWMonitor() const;

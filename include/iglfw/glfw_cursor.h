@@ -11,31 +11,19 @@
 #include <memory>
 #include <mathutil/uvec.h>
 
-namespace GLFW
-{
+namespace GLFW {
 	class Cursor;
-	DECLARE_BASE_HANDLE(DLLGLFW,Cursor,Cursor);
+	DECLARE_BASE_HANDLE(DLLGLFW, Cursor, Cursor);
 
-	class DLLGLFW Cursor
-	{
-	public:
-		enum class DLLGLFW Shape : uint32_t
-		{
-			Default = 0,
-			Hidden = 1,
-			Arrow = GLFW_ARROW_CURSOR,
-			IBeam = GLFW_IBEAM_CURSOR,
-			Crosshair = GLFW_CROSSHAIR_CURSOR,
-			Hand = GLFW_HAND_CURSOR,
-			HResize = GLFW_HRESIZE_CURSOR,
-			VResize = GLFW_VRESIZE_CURSOR
-		};
-	private:
+	class DLLGLFW Cursor {
+	  public:
+		enum class DLLGLFW Shape : uint32_t { Default = 0, Hidden = 1, Arrow = GLFW_ARROW_CURSOR, IBeam = GLFW_IBEAM_CURSOR, Crosshair = GLFW_CROSSHAIR_CURSOR, Hand = GLFW_HAND_CURSOR, HResize = GLFW_HRESIZE_CURSOR, VResize = GLFW_VRESIZE_CURSOR };
+	  private:
 		Cursor(GLFWcursor *cursor);
 		GLFWcursor *m_cursor;
 		CursorHandle m_handle;
-	public:
-		static std::unique_ptr<Cursor> Create(uint32_t width,uint32_t height,unsigned char *data,const Vector2i &hotSpot=Vector2i(0,0));
+	  public:
+		static std::unique_ptr<Cursor> Create(uint32_t width, uint32_t height, unsigned char *data, const Vector2i &hotSpot = Vector2i(0, 0));
 		static std::unique_ptr<Cursor> Create(Shape shape);
 		~Cursor();
 		CursorHandle GetHandle();

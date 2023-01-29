@@ -6,17 +6,17 @@
 #define __GLFW_DEFINITIONS_H__
 
 #ifdef DLLGLFW_EX
-	#ifdef __linux__
-		#define DLLGLFW __attribute__((visibility("default")))
-	#else
- 	  #define DLLGLFW  __declspec(dllexport)
-	#endif
+#ifdef __linux__
+#define DLLGLFW __attribute__((visibility("default")))
 #else
-	#ifdef __linux__
-		#define DLLGLFW
-	#else
-		#define DLLGLFW  __declspec(dllimport)
-	#endif
+#define DLLGLFW __declspec(dllexport)
+#endif
+#else
+#ifdef __linux__
+#define DLLGLFW
+#else
+#define DLLGLFW __declspec(dllimport)
+#endif
 #endif
 
 #endif
