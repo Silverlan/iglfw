@@ -125,6 +125,7 @@ namespace GLFW {
 		bool GetStickyMouseButtonsEnabled() const;
 		void SwapBuffers() const;
 		void SetWindowTitle(const std::string &title);
+		const std::string &GetWindowTitle() const;
 		// RGBA32; Recommended size is 48x48
 		void SetWindowIcon(uint32_t width, uint32_t height, const uint8_t *data);
 		Vector2i GetPos() const;
@@ -170,6 +171,7 @@ namespace GLFW {
 		WindowHandle m_handle;
 		WindowCreationInfo::API m_api = WindowCreationInfo::API::None;
 		WindowCreationInfo::Flags m_flags = WindowCreationInfo::Flags::None;
+		std::string m_windowTitle;
 		CallbackInterface m_callbackInterface {};
 		std::optional<Vector2> m_cursorPosOverride = {};
 		void KeyCallback(int key, int scancode, int action, int mods);

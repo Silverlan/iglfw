@@ -198,7 +198,12 @@ void GLFW::Window::SetVSyncEnabled(bool enabled)
 bool GLFW::Window::IsVSyncEnabled() const { return !umath::is_flag_set(m_flags, WindowCreationInfo::Flags::DisableVSync); }
 
 void GLFW::Window::SwapBuffers() const { glfwSwapBuffers(const_cast<GLFWwindow *>(GetGLFWWindow())); }
-void GLFW::Window::SetWindowTitle(const std::string &title) { glfwSetWindowTitle(const_cast<GLFWwindow *>(GetGLFWWindow()), title.c_str()); }
+void GLFW::Window::SetWindowTitle(const std::string &title)
+{
+	glfwSetWindowTitle(const_cast<GLFWwindow *>(GetGLFWWindow()), title.c_str());
+	m_windowTitle = title;
+}
+const std::string &GLFW::Window::GetWindowTitle() const { return m_windowTitle; }
 void GLFW::Window::SetWindowIcon(uint32_t width, uint32_t height, const uint8_t *data)
 {
 	GLFWimage iconData {};
@@ -442,5 +447,6 @@ std::unique_ptr<GLFW::Window> GLFW::Window::Create(const WindowCreationInfo &inf
 	glfwSetWindowUserPointer(window, vkWindow.get());
 	vkWindow->m_api = info.api;
 	vkWindow->m_flags = info.flags;
+	vkWindow->m_windowTitle = info.title;
 	return vkWindow;
 }
