@@ -17,6 +17,7 @@
 
 #pragma warning(push)
 #pragma warning(disable : 4251)
+struct Color;
 namespace GLFW {
 	class Window;
 	DECLARE_BASE_HANDLE(DLLGLFW, Window, Window);
@@ -106,6 +107,9 @@ namespace GLFW {
 		void SetCallbacks(const CallbackInterface &callbacks);
 		const CallbackInterface &GetCallbacks() const;
 
+		void SetBorderColor(const Color &color);
+		void SetTitleBarColor(const Color &color);
+
 		bool ShouldClose() const;
 		void SetShouldClose(bool b);
 		KeyState GetKeyState(Key key);
@@ -161,6 +165,7 @@ namespace GLFW {
 		bool IsResizable() const;
 		bool IsDecorated() const;
 		bool IsFloating() const;
+		void SetResizable(bool resizable);
 
 		void SetCursor(const Cursor &cursor);
 		void ClearCursor();

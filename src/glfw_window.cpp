@@ -5,16 +5,23 @@
 #include "iglfw/glfw_window.h"
 
 #ifdef _WIN32
+
 #define GLFW_EXPOSE_NATIVE_WGL
 #define GLFW_EXPOSE_NATIVE_WIN32
+
+#include <dwmapi.h>
+#pragma comment(lib, "dwmapi.lib")
+
 #else
 #define GLFW_EXPOSE_NATIVE_X11
 #endif
 #include <GLFW/glfw3native.h>
+#include <mathutil/color.h>
+#include <sharedutils/util.h>
 
 #undef API
 #undef None
-
+#pragma optimize("",off)
 namespace GLFW {
 	DEFINE_BASE_HANDLE(, GLFW::Window, Window);
 };
@@ -220,7 +227,42 @@ Vector2i GLFW::Window::GetPos() const
 	glfwGetWindowPos(const_cast<GLFWwindow *>(GetGLFWWindow()), &x, &y);
 	return Vector2i(x, y);
 }
-void GLFW::Window::SetPos(const Vector2i &pos) { glfwSetWindowPos(const_cast<GLFWwindow *>(GetGLFWWindow()), pos.x, pos.y); }
+
+void GLFW::Window::SetBorderColor(const Color &color) {
+#ifdef _WIN32
+
+#if defined(WINVER) && (WINVER >= 0x0501)
+	auto tmp = color;
+	umath::swap(tmp.r, tmp.b);
+	auto hex = tmp.ToHexColorRGB();
+	COLORREF hexCol = ::util::to_hex_number("0x" + hex);
+	DwmSetWindowAttribute(GetWin32Handle(), DWMWINDOWATTRIBUTE::DWMWA_BORDER_COLOR, &hexCol, sizeof(hexCol));
+#endif
+
+#else
+	// Not yet implemented
+#endif
+}
+void GLFW::Window::SetTitleBarColor(const Color &color)
+{
+#ifdef _WIN32
+
+#if defined(WINVER) && (WINVER >= 0x0A00)
+	auto tmp = color;
+	umath::swap(tmp.r, tmp.b);
+	auto hex = tmp.ToHexColorRGB();
+	COLORREF hexCol = ::util::to_hex_number("0x" + hex);
+	DwmSetWindowAttribute(GetWin32Handle(), DWMWINDOWATTRIBUTE::DWMWA_CAPTION_COLOR, &hexCol, sizeof(hexCol));
+#endif
+
+#else
+	// Not yet implemented
+#endif
+}
+
+void GLFW::Window::SetPos(const Vector2i &pos) {
+	glfwSetWindowPos(const_cast<GLFWwindow *>(GetGLFWWindow()), pos.x, pos.y);
+}
 Vector2i GLFW::Window::GetSize() const
 {
 	int w = 0;
@@ -294,6 +336,7 @@ bool GLFW::Window::IsVisible() const { return (glfwGetWindowAttrib(const_cast<GL
 bool GLFW::Window::IsResizable() const { return (glfwGetWindowAttrib(const_cast<GLFWwindow *>(GetGLFWWindow()), GLFW_RESIZABLE) != GLFW_FALSE) ? true : false; }
 bool GLFW::Window::IsDecorated() const { return (glfwGetWindowAttrib(const_cast<GLFWwindow *>(GetGLFWWindow()), GLFW_DECORATED) != GLFW_FALSE) ? true : false; }
 bool GLFW::Window::IsFloating() const { return (glfwGetWindowAttrib(const_cast<GLFWwindow *>(GetGLFWWindow()), GLFW_FLOATING) != GLFW_FALSE) ? true : false; }
+void GLFW::Window::SetResizable(bool resizable) { glfwSetWindowAttrib(const_cast<GLFWwindow *>(GetGLFWWindow()), GLFW_RESIZABLE, resizable ? GLFW_TRUE : GLFW_FALSE); }
 
 void GLFW::Window::SetCursor(const Cursor &cursor)
 {
@@ -450,3 +493,4 @@ std::unique_ptr<GLFW::Window> GLFW::Window::Create(const WindowCreationInfo &inf
 	vkWindow->m_windowTitle = info.title;
 	return vkWindow;
 }
+#pragma optimize("", on)
