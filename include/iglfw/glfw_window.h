@@ -79,10 +79,12 @@ namespace GLFW {
 		std::function<void(Window &, bool)> iconifyCallback = nullptr;
 		std::function<void(Window &, Vector2i)> windowPosCallback = nullptr;
 		std::function<void(Window &, Vector2i)> windowSizeCallback = nullptr;
+		std::function<bool(Window &)> onShouldClose = nullptr;
 	};
 
 	class DLLGLFW Window {
 	  public:
+		static std::vector<Window *> &GetWindows();
 		static std::unique_ptr<Window> Create(const WindowCreationInfo &info);
 		~Window();
 		const GLFWwindow *GetGLFWWindow() const;
@@ -104,6 +106,7 @@ namespace GLFW {
 		void SetIconifyCallback(const std::function<void(Window &, bool)> &callback);
 		void SetWindowPosCallback(const std::function<void(Window &, Vector2i)> &callback);
 		void SetWindowSizeCallback(const std::function<void(Window &, Vector2i)> &callback);
+		void SetOnShouldCloseCallback(const std::function<bool(Window &)> &callback);
 		void SetCallbacks(const CallbackInterface &callbacks);
 		const CallbackInterface &GetCallbacks() const;
 
@@ -149,6 +152,7 @@ namespace GLFW {
 		WindowCreationInfo::API GetAPI() const;
 		void MakeContextCurrent() const;
 		void UpdateWindow(const WindowCreationInfo &info);
+		void Poll();
 
 #ifdef _WIN32
 		HWND GetWin32Handle() const;
@@ -176,6 +180,7 @@ namespace GLFW {
 		WindowHandle m_handle;
 		WindowCreationInfo::API m_api = WindowCreationInfo::API::None;
 		WindowCreationInfo::Flags m_flags = WindowCreationInfo::Flags::None;
+		bool m_shouldCloseInvoked = false;
 		std::string m_windowTitle;
 		CallbackInterface m_callbackInterface {};
 		std::optional<Vector2> m_cursorPosOverride = {};

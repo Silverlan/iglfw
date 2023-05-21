@@ -21,7 +21,7 @@
 
 #undef API
 #undef None
-#pragma optimize("",off)
+
 namespace GLFW {
 	DEFINE_BASE_HANDLE(, GLFW::Window, Window);
 };
@@ -37,12 +37,6 @@ GLFW::Window::Window(GLFWwindow *window) : m_handle(new PtrWindow(this)), m_wind
 	auto *monitor = glfwGetWindowMonitor(m_window);
 	if(monitor != nullptr)
 		m_monitor = std::make_unique<Monitor>(monitor);
-}
-
-GLFW::Window::~Window()
-{
-	m_handle.Invalidate();
-	glfwDestroyWindow(m_window);
 }
 
 GLFW::WindowHandle GLFW::Window::GetHandle() { return m_handle; }
@@ -160,6 +154,7 @@ void GLFW::Window::SetFocusCallback(const std::function<void(Window &, bool)> &c
 void GLFW::Window::SetIconifyCallback(const std::function<void(Window &, bool)> &callback) { m_callbackInterface.iconifyCallback = callback; }
 void GLFW::Window::SetWindowPosCallback(const std::function<void(Window &, Vector2i)> &callback) { m_callbackInterface.windowPosCallback = callback; }
 void GLFW::Window::SetWindowSizeCallback(const std::function<void(Window &, Vector2i)> &callback) { m_callbackInterface.windowSizeCallback = callback; }
+void GLFW::Window::SetOnShouldCloseCallback(const std::function<bool(Window &)> &callback) { m_callbackInterface.onShouldClose = callback; }
 void GLFW::Window::SetCallbacks(const CallbackInterface &callbacks) { m_callbackInterface = callbacks; }
 const GLFW::CallbackInterface &GLFW::Window::GetCallbacks() const { return m_callbackInterface; }
 
@@ -228,7 +223,8 @@ Vector2i GLFW::Window::GetPos() const
 	return Vector2i(x, y);
 }
 
-void GLFW::Window::SetBorderColor(const Color &color) {
+void GLFW::Window::SetBorderColor(const Color &color)
+{
 #ifdef _WIN32
 
 #if defined(WINVER) && (WINVER >= 0x0501)
@@ -260,9 +256,7 @@ void GLFW::Window::SetTitleBarColor(const Color &color)
 #endif
 }
 
-void GLFW::Window::SetPos(const Vector2i &pos) {
-	glfwSetWindowPos(const_cast<GLFWwindow *>(GetGLFWWindow()), pos.x, pos.y);
-}
+void GLFW::Window::SetPos(const Vector2i &pos) { glfwSetWindowPos(const_cast<GLFWwindow *>(GetGLFWWindow()), pos.x, pos.y); }
 Vector2i GLFW::Window::GetSize() const
 {
 	int w = 0;
@@ -272,6 +266,21 @@ Vector2i GLFW::Window::GetSize() const
 }
 void GLFW::Window::SetSize(const Vector2i &size) { glfwSetWindowSize(const_cast<GLFWwindow *>(GetGLFWWindow()), size.x, size.y); }
 
+void GLFW::Window::Poll()
+{
+	if(!m_shouldCloseInvoked) {
+		if(ShouldClose()) {
+			m_shouldCloseInvoked = true;
+			if(m_callbackInterface.onShouldClose) {
+				auto res = m_callbackInterface.onShouldClose(*this);
+				if(res == false) {
+					m_shouldCloseInvoked = false;
+					SetShouldClose(false);
+				}
+			}
+		}
+	}
+}
 void GLFW::Window::UpdateWindow(const WindowCreationInfo &info)
 {
 	GLFWmonitor *monitor = nullptr;
@@ -349,6 +358,20 @@ void GLFW::Window::ClearCursor() { glfwSetCursor(const_cast<GLFWwindow *>(GetGLF
 HWND GLFW::Window::GetWin32Handle() const { return glfwGetWin32Window(const_cast<GLFWwindow *>(GetGLFWWindow())); }
 HGLRC GLFW::Window::GetOpenGLContextHandle() const { return glfwGetWGLContext(const_cast<GLFWwindow *>(GetGLFWWindow())); }
 #endif
+
+static std::vector<GLFW::Window *> g_windows;
+std::vector<GLFW::Window *> &GLFW::Window::GetWindows() { return g_windows; }
+
+GLFW::Window::~Window()
+{
+	m_handle.Invalidate();
+	glfwDestroyWindow(m_window);
+
+	auto it = std::find(g_windows.begin(), g_windows.end(), this);
+	assert(it != g_windows.end());
+	if(it != g_windows.end())
+		g_windows.erase(it);
+}
 
 std::unique_ptr<GLFW::Window> GLFW::Window::Create(const WindowCreationInfo &info)
 {
@@ -491,6 +514,6 @@ std::unique_ptr<GLFW::Window> GLFW::Window::Create(const WindowCreationInfo &inf
 	vkWindow->m_api = info.api;
 	vkWindow->m_flags = info.flags;
 	vkWindow->m_windowTitle = info.title;
+	g_windows.push_back(vkWindow.get());
 	return vkWindow;
 }
-#pragma optimize("", on)

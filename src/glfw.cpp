@@ -4,6 +4,7 @@
 
 #include "iglfw/glfw.h"
 #include "impl_glfw_joystick_handler.h"
+#include "iglfw/glfw_window.h"
 
 #pragma comment(lib, "glfw3dll.lib")
 #pragma comment(lib, "mathutil.lib")
@@ -31,7 +32,12 @@ void GLFW::get_version(int *major, int *minor, int *rev) { glfwGetVersion(major,
 
 std::string GLFW::get_version_string() { return glfwGetVersionString(); }
 
-void GLFW::poll_events() { glfwPollEvents(); }
+void GLFW::poll_events()
+{
+	glfwPollEvents();
+	for(auto *window : GLFW::Window::GetWindows())
+		window->Poll();
+}
 void GLFW::poll_joystick_events()
 {
 	if(s_joystickHandler != nullptr)
