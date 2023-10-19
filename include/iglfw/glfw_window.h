@@ -35,7 +35,8 @@ namespace GLFW {
 		enum class Flags : uint32_t {
 			None = 0u,
 			DebugContext = 1u,
-			DisableVSync = DebugContext << 1u // OpenGL only
+			DisableVSync = DebugContext << 1u, // OpenGL only
+			Windowless = DisableVSync << 1u
 		};
 		WindowCreationInfo();
 		bool resizable;

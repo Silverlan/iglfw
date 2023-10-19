@@ -416,6 +416,7 @@ std::unique_ptr<GLFW::Window> GLFW::Window::Create(const WindowCreationInfo &inf
 	GLFWmonitor *monitor = nullptr;
 	if(info.monitor.has_value())
 		monitor = const_cast<GLFWmonitor *>(info.monitor->GetGLFWMonitor());
+	glfwWindowHint(GLFW_VISIBLE, umath::is_flag_set(info.flags, WindowCreationInfo::Flags::Windowless) ? GLFW_FALSE : GLFW_TRUE);
 	auto *window = glfwCreateWindow(info.width, info.height, info.title.c_str(), monitor, nullptr);
 	if(window == nullptr)
 		throw std::runtime_error("Unable to create GLFW Window!");
