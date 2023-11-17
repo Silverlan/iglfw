@@ -232,7 +232,8 @@ void GLFW::Window::SetBorderColor(const Color &color)
 	umath::swap(tmp.r, tmp.b);
 	auto hex = tmp.ToHexColorRGB();
 	COLORREF hexCol = ::util::to_hex_number("0x" + hex);
-	DwmSetWindowAttribute(GetWin32Handle(), DWMWINDOWATTRIBUTE::DWMWA_BORDER_COLOR, &hexCol, sizeof(hexCol));
+	const DWORD ATTR_BORDER_COLOR = 34; // See DWMWINDOWATTRIBUTE::DWMWA_BORDER_COLOR, can't use the enum because it may not be available and there's no way to check for it
+	DwmSetWindowAttribute(GetWin32Handle(), ATTR_BORDER_COLOR, &hexCol, sizeof(hexCol));
 #endif
 
 #else
@@ -248,7 +249,8 @@ void GLFW::Window::SetTitleBarColor(const Color &color)
 	umath::swap(tmp.r, tmp.b);
 	auto hex = tmp.ToHexColorRGB();
 	COLORREF hexCol = ::util::to_hex_number("0x" + hex);
-	DwmSetWindowAttribute(GetWin32Handle(), DWMWINDOWATTRIBUTE::DWMWA_CAPTION_COLOR, &hexCol, sizeof(hexCol));
+	const DWORD ATTR_CAPTION_COLOR = 35; // See DWMWINDOWATTRIBUTE::DWMWA_CAPTION_COLOR, can't use the enum because it may not be available and there's no way to check for it
+	DwmSetWindowAttribute(GetWin32Handle(), ATTR_CAPTION_COLOR, &hexCol, sizeof(hexCol));
 #endif
 
 #else
