@@ -80,6 +80,8 @@ namespace GLFW {
 		std::function<void(Window &, bool)> iconifyCallback = nullptr;
 		std::function<void(Window &, Vector2i)> windowPosCallback = nullptr;
 		std::function<void(Window &, Vector2i)> windowSizeCallback = nullptr;
+		std::function<void(Window &, int, unsigned int *, int, int *, int, int)> preeditCallback = nullptr;
+		std::function<void(Window &)> imeStatusCallback = nullptr;
 		std::function<bool(Window &)> onShouldClose = nullptr;
 	};
 
@@ -107,6 +109,8 @@ namespace GLFW {
 		void SetIconifyCallback(const std::function<void(Window &, bool)> &callback);
 		void SetWindowPosCallback(const std::function<void(Window &, Vector2i)> &callback);
 		void SetWindowSizeCallback(const std::function<void(Window &, Vector2i)> &callback);
+		void SetPreeditCallback(const std::function<void(Window &, int, unsigned int *, int, int *, int, int)> &callback);
+		void SetIMEStatusCallback(const std::function<void(Window &)> &callback);
 		void SetOnShouldCloseCallback(const std::function<bool(Window &)> &callback);
 		void SetCallbacks(const CallbackInterface &callbacks);
 		const CallbackInterface &GetCallbacks() const;
@@ -131,6 +135,11 @@ namespace GLFW {
 		bool GetStickyKeysEnabled() const;
 		void SetStickyMouseButtonsEnabled(bool b);
 		bool GetStickyMouseButtonsEnabled() const;
+		void SetPreeditCursorRectangle(int32_t x, int32_t y, int32_t w, int32_t h);
+		void GetPreeditCursorRectangle(int32_t &outX, int32_t &outY, int32_t &outW, int32_t &outH) const;
+		void ResetPreeditText();
+		void SetIMEEnabled(bool enabled);
+		bool IsIMEEnabled() const;
 		void SwapBuffers() const;
 		void SetWindowTitle(const std::string &title);
 		const std::string &GetWindowTitle() const;
@@ -199,6 +208,8 @@ namespace GLFW {
 		void IconifyCallback(int iconified);
 		void WindowPosCallback(int x, int y);
 		void WindowSizeCallback(int w, int h);
+		void PreeditCallback(int preedit_count, unsigned int *preedit_string, int block_count, int *block_sizes, int focused_block, int caret);
+		void IMEStatusCallback();
 	};
 };
 REGISTER_BASIC_BITWISE_OPERATORS(GLFW::WindowCreationInfo::Flags)

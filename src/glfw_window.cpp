@@ -121,6 +121,16 @@ void GLFW::Window::WindowSizeCallback(int w, int h)
 	if(m_callbackInterface.windowSizeCallback != nullptr)
 		m_callbackInterface.windowSizeCallback(*this, Vector2i(w, h));
 }
+void GLFW::Window::PreeditCallback(int preedit_count, unsigned int *preedit_string, int block_count, int *block_sizes, int focused_block, int caret)
+{
+	if(m_callbackInterface.preeditCallback != nullptr)
+		m_callbackInterface.preeditCallback(*this, preedit_count, preedit_string, block_count, block_sizes, focused_block, caret);
+}
+void GLFW::Window::IMEStatusCallback()
+{
+	if(m_callbackInterface.imeStatusCallback != nullptr)
+		m_callbackInterface.imeStatusCallback(*this);
+}
 
 const GLFW::Monitor *GLFW::Window::GetMonitor() const { return m_monitor.get(); }
 
@@ -154,6 +164,8 @@ void GLFW::Window::SetFocusCallback(const std::function<void(Window &, bool)> &c
 void GLFW::Window::SetIconifyCallback(const std::function<void(Window &, bool)> &callback) { m_callbackInterface.iconifyCallback = callback; }
 void GLFW::Window::SetWindowPosCallback(const std::function<void(Window &, Vector2i)> &callback) { m_callbackInterface.windowPosCallback = callback; }
 void GLFW::Window::SetWindowSizeCallback(const std::function<void(Window &, Vector2i)> &callback) { m_callbackInterface.windowSizeCallback = callback; }
+void GLFW::Window::SetPreeditCallback(const std::function<void(Window &, int, unsigned int *, int, int *, int, int)> &callback) { m_callbackInterface.preeditCallback = callback; }
+void GLFW::Window::SetIMEStatusCallback(const std::function<void(Window &)> &callback) { m_callbackInterface.imeStatusCallback = callback; }
 void GLFW::Window::SetOnShouldCloseCallback(const std::function<bool(Window &)> &callback) { m_callbackInterface.onShouldClose = callback; }
 void GLFW::Window::SetCallbacks(const CallbackInterface &callbacks) { m_callbackInterface = callbacks; }
 const GLFW::CallbackInterface &GLFW::Window::GetCallbacks() const { return m_callbackInterface; }
@@ -191,6 +203,11 @@ void GLFW::Window::SetStickyKeysEnabled(bool b) { return glfwSetInputMode(const_
 bool GLFW::Window::GetStickyKeysEnabled() const { return (glfwGetInputMode(const_cast<GLFWwindow *>(GetGLFWWindow()), GLFW_STICKY_KEYS) == GLFW_TRUE) ? true : false; }
 void GLFW::Window::SetStickyMouseButtonsEnabled(bool b) { return glfwSetInputMode(const_cast<GLFWwindow *>(GetGLFWWindow()), GLFW_STICKY_MOUSE_BUTTONS, (b == true) ? GLFW_TRUE : GLFW_FALSE); }
 bool GLFW::Window::GetStickyMouseButtonsEnabled() const { return (glfwGetInputMode(const_cast<GLFWwindow *>(GetGLFWWindow()), GLFW_STICKY_MOUSE_BUTTONS) == GLFW_TRUE) ? true : false; }
+void GLFW::Window::SetPreeditCursorRectangle(int32_t x, int32_t y, int32_t w, int32_t h) { glfwSetPreeditCursorRectangle(const_cast<GLFWwindow *>(GetGLFWWindow()), x, y, w, h); }
+void GLFW::Window::GetPreeditCursorRectangle(int32_t &outX, int32_t &outY, int32_t &outW, int32_t &outH) const { glfwGetPreeditCursorRectangle(const_cast<GLFWwindow *>(GetGLFWWindow()), &outX, &outY, &outW, &outH); }
+void GLFW::Window::ResetPreeditText() { glfwResetPreeditText(const_cast<GLFWwindow *>(GetGLFWWindow())); }
+void GLFW::Window::SetIMEEnabled(bool enabled) { return glfwSetInputMode(const_cast<GLFWwindow *>(GetGLFWWindow()), GLFW_IME, enabled ? GLFW_TRUE : GLFW_FALSE); }
+bool GLFW::Window::IsIMEEnabled() const { return (glfwGetInputMode(const_cast<GLFWwindow *>(GetGLFWWindow()), GLFW_IME) == GLFW_TRUE) ? true : false; }
 
 void GLFW::Window::SetVSyncEnabled(bool enabled)
 {
@@ -512,6 +529,18 @@ std::unique_ptr<GLFW::Window> GLFW::Window::Create(const WindowCreationInfo &inf
 		if(vkWindow == nullptr)
 			return;
 		vkWindow->WindowSizeCallback(w, h);
+	});
+	glfwSetPreeditCallback(window, [](GLFWwindow *window, int preedit_count, unsigned int *preedit_string, int block_count, int *block_sizes, int focused_block, int caret) {
+		auto *vkWindow = static_cast<Window *>(glfwGetWindowUserPointer(window));
+		if(vkWindow == nullptr)
+			return;
+		vkWindow->PreeditCallback(preedit_count, preedit_string, block_count, block_sizes, focused_block, caret);
+	});
+	glfwSetIMEStatusCallback(window, [](GLFWwindow *window) {
+		auto *vkWindow = static_cast<Window *>(glfwGetWindowUserPointer(window));
+		if(vkWindow == nullptr)
+			return;
+		vkWindow->IMEStatusCallback();
 	});
 	glfwSetWindowUserPointer(window, vkWindow.get());
 	vkWindow->m_api = info.api;
