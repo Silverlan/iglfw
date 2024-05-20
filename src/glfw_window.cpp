@@ -18,6 +18,7 @@
 #include <GLFW/glfw3native.h>
 #include <mathutil/color.h>
 #include <sharedutils/util.h>
+#include <algorithm>
 
 #undef API
 #undef None
