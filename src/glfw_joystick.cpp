@@ -6,6 +6,7 @@
 #include "iglfw/glfw_joystick.h"
 #include "iglfw/glfw.h"
 #include <cstring>
+#include <cassert>
 
 using namespace GLFW;
 
