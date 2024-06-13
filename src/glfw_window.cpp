@@ -19,6 +19,7 @@
 #include <mathutil/color.h>
 #include <sharedutils/util.h>
 #include <algorithm>
+#include <cassert>
 
 #undef API
 #undef None
