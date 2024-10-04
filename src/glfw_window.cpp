@@ -20,6 +20,7 @@
 #include <sharedutils/util.h>
 #include <algorithm>
 #include <cassert>
+#include "file_drop_target.hpp"
 
 #undef API
 #undef None
@@ -39,6 +40,9 @@ GLFW::Window::Window(GLFWwindow *window) : m_handle(new PtrWindow(this)), m_wind
 	auto *monitor = glfwGetWindowMonitor(m_window);
 	if(monitor != nullptr)
 		m_monitor = std::make_unique<Monitor>(monitor);
+#ifdef _WIN32
+	InitFileDropHandler();
+#endif
 }
 
 GLFW::WindowHandle GLFW::Window::GetHandle() { return m_handle; }
@@ -92,6 +96,16 @@ void GLFW::Window::DropCallback(int count, const char **paths)
 			files.push_back(paths[i]);
 		m_callbackInterface.dropCallback(*this, files);
 	}
+}
+void GLFW::Window::DragEnterCallback()
+{
+	if(m_callbackInterface.dragEnterCallback != nullptr)
+		m_callbackInterface.dragEnterCallback(*this);
+}
+void GLFW::Window::DragExitCallback()
+{
+	if(m_callbackInterface.dragExitCallback != nullptr)
+		m_callbackInterface.dragExitCallback(*this);
 }
 void GLFW::Window::MouseButtonCallback(int button, int action, int mods)
 {
@@ -159,6 +173,8 @@ void GLFW::Window::SetCharModsCallback(const std::function<void(Window &, unsign
 void GLFW::Window::SetCursorEnterCallback(const std::function<void(Window &, bool)> &callback) { m_callbackInterface.cursorEnterCallback = callback; }
 void GLFW::Window::SetCursorPosCallback(const std::function<void(Window &, Vector2)> &callback) { m_callbackInterface.cursorPosCallback = callback; }
 void GLFW::Window::SetDropCallback(const std::function<void(Window &, std::vector<std::string> &)> &callback) { m_callbackInterface.dropCallback = callback; }
+void GLFW::Window::SetDragEnterCallback(const std::function<void(Window &)> &callback) { m_callbackInterface.dragEnterCallback = callback; }
+void GLFW::Window::SetDragExitCallback(const std::function<void(Window &)> &callback) { m_callbackInterface.dragExitCallback = callback; }
 void GLFW::Window::SetMouseButtonCallback(const std::function<void(Window &, MouseButton, KeyState, Modifier)> &callback) { m_callbackInterface.mouseButtonCallback = callback; }
 void GLFW::Window::SetScrollCallback(const std::function<void(Window &, Vector2)> &callback) { m_callbackInterface.scrollCallback = callback; }
 void GLFW::Window::SetCloseCallback(const std::function<void(Window &)> &callback) { m_callbackInterface.closeCallback = callback; }
@@ -385,6 +401,9 @@ std::vector<GLFW::Window *> &GLFW::Window::GetWindows() { return g_windows; }
 
 GLFW::Window::~Window()
 {
+#ifdef _WIN32
+	ReleaseFileDropHandler();
+#endif
 	m_handle.Invalidate();
 	glfwDestroyWindow(m_window);
 

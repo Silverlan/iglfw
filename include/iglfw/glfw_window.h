@@ -19,6 +19,9 @@
 #pragma warning(disable : 4251)
 struct Color;
 namespace GLFW {
+#ifdef _WIN32
+	class FileDropTarget;
+#endif
 	class Window;
 	DECLARE_BASE_HANDLE(DLLGLFW, Window, Window);
 
@@ -73,6 +76,8 @@ namespace GLFW {
 		std::function<void(Window &, bool)> cursorEnterCallback = nullptr;
 		std::function<void(Window &, Vector2)> cursorPosCallback = nullptr;
 		std::function<void(Window &, std::vector<std::string> &)> dropCallback = nullptr;
+		std::function<void(Window &)> dragEnterCallback = nullptr;
+		std::function<void(Window &)> dragExitCallback = nullptr;
 		std::function<void(Window &, MouseButton, KeyState, Modifier)> mouseButtonCallback = nullptr;
 		std::function<void(Window &, Vector2)> scrollCallback = nullptr;
 		std::function<void(Window &)> closeCallback = nullptr;
@@ -102,6 +107,8 @@ namespace GLFW {
 		void SetCursorEnterCallback(const std::function<void(Window &, bool)> &callback);
 		void SetCursorPosCallback(const std::function<void(Window &, Vector2)> &callback);
 		void SetDropCallback(const std::function<void(Window &, std::vector<std::string> &)> &callback);
+		void SetDragEnterCallback(const std::function<void(Window &)> &callback);
+		void SetDragExitCallback(const std::function<void(Window &)> &callback);
 		void SetMouseButtonCallback(const std::function<void(Window &, MouseButton, KeyState, Modifier)> &callback);
 		void SetScrollCallback(const std::function<void(Window &, Vector2)> &callback);
 		void SetCloseCallback(const std::function<void(Window &)> &callback);
@@ -184,6 +191,9 @@ namespace GLFW {
 		void SetCursor(const Cursor &cursor);
 		void ClearCursor();
 	  private:
+#ifdef _WIN32
+		friend FileDropTarget;
+#endif
 		Window(GLFWwindow *window);
 		GLFWwindow *m_window;
 		std::unique_ptr<Monitor> m_monitor;
@@ -202,6 +212,8 @@ namespace GLFW {
 		void CursorEnterCallback(int e);
 		void CursorPosCallback(double x, double y);
 		void DropCallback(int count, const char **paths);
+		void DragEnterCallback();
+		void DragExitCallback();
 		void MouseButtonCallback(int button, int action, int mods);
 		void ScrollCallback(double xoffset, double yoffset);
 		void FocusCallback(int focused);
@@ -210,6 +222,11 @@ namespace GLFW {
 		void WindowSizeCallback(int w, int h);
 		void PreeditCallback(int preedit_count, unsigned int *preedit_string, int block_count, int *block_sizes, int focused_block, int caret);
 		void IMEStatusCallback();
+#ifdef _WIN32
+		std::unique_ptr<FileDropTarget> m_fileDropTarget;
+		void InitFileDropHandler();
+		void ReleaseFileDropHandler();
+#endif
 	};
 };
 REGISTER_BASIC_BITWISE_OPERATORS(GLFW::WindowCreationInfo::Flags)

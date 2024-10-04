@@ -5,6 +5,9 @@
 #include "iglfw/glfw.h"
 #include "impl_glfw_joystick_handler.h"
 #include "iglfw/glfw_window.h"
+#ifdef _WIN32
+#include <oleidl.h>
+#endif
 
 #pragma comment(lib, "glfw3dll.lib")
 #pragma comment(lib, "mathutil.lib")
@@ -13,8 +16,13 @@ static bool bIsInitialized = false;
 static GLFW::JoystickHandler *s_joystickHandler = nullptr;
 bool GLFW::initialize()
 {
+	if(bIsInitialized)
+		return bIsInitialized;
 	auto r = (glfwInit() != GLFW_FALSE) ? true : false;
 	bIsInitialized = r;
+#ifdef _WIN32
+	OleInitialize(nullptr);
+#endif
 	return r;
 }
 
@@ -24,6 +32,9 @@ void GLFW::terminate()
 		return;
 	set_joysticks_enabled(false);
 	glfwTerminate();
+#ifdef _WIN32
+	OleUninitialize();
+#endif
 }
 
 bool GLFW::is_initialized() { return bIsInitialized; }
