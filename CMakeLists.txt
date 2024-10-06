@@ -14,5 +14,6 @@ pr_add_compile_definitions(
 		-DGLFW_DLL
 		-DDLLGLFW_EX
 )
+pr_add_compile_definitions(${PROJ_NAME} -DGLFW_INCLUDE_NONE PUBLIC)
 
 pr_finalize(${PROJ_NAME})
