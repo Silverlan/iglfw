@@ -8,6 +8,7 @@
 #ifdef _WIN32
 
 #include "iglfw/glfw_window.h"
+#include <sharedutils/util_string.h>
 #include <shlobj.h>
 
 namespace GLFW {
@@ -73,9 +74,10 @@ namespace GLFW {
 					// Process each file
 					droppedFiles.reserve(fileCount);
 					for(UINT i = 0; i < fileCount; i++) {
-						char fileName[MAX_PATH];
-						if(DragQueryFile(hDrop, i, fileName, MAX_PATH))
-							droppedFiles.push_back(fileName);
+						wchar_t fileName[MAX_PATH];
+
+						if(DragQueryFileW(hDrop, i, fileName, MAX_PATH))
+							droppedFiles.push_back(ustring::wstring_to_string(fileName));
 					}
 					GlobalUnlock(stg.hGlobal);
 				}
