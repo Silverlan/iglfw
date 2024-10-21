@@ -150,14 +150,15 @@ void GLFW::Window::IMEStatusCallback()
 
 const GLFW::Monitor *GLFW::Window::GetMonitor() const { return m_monitor.get(); }
 
-GLFW::WindowCreationInfo::API GLFW::Window::GetAPI() const { return m_api; }
+const GLFW::WindowCreationInfo &GLFW::Window::GetCreationInfo() const { return m_creationInfo; }
+GLFW::WindowCreationInfo::API GLFW::Window::GetAPI() const { return m_creationInfo.api; }
 
 void GLFW::Window::MakeContextCurrent() const
 {
 	if(GetAPI() == WindowCreationInfo::API::None)
 		return;
 	glfwMakeContextCurrent(m_window);
-	if(umath::is_flag_set(m_flags, WindowCreationInfo::Flags::DisableVSync))
+	if(umath::is_flag_set(m_creationInfo.flags, WindowCreationInfo::Flags::DisableVSync))
 		glfwSwapInterval(0);
 	else
 		glfwSwapInterval(1);
@@ -229,10 +230,10 @@ bool GLFW::Window::IsIMEEnabled() const { return (glfwGetInputMode(const_cast<GL
 
 void GLFW::Window::SetVSyncEnabled(bool enabled)
 {
-	umath::set_flag(m_flags, WindowCreationInfo::Flags::DisableVSync, !enabled);
+	umath::set_flag(m_creationInfo.flags, WindowCreationInfo::Flags::DisableVSync, !enabled);
 	glfwSwapInterval(enabled ? 1 : 0);
 }
-bool GLFW::Window::IsVSyncEnabled() const { return !umath::is_flag_set(m_flags, WindowCreationInfo::Flags::DisableVSync); }
+bool GLFW::Window::IsVSyncEnabled() const { return !umath::is_flag_set(m_creationInfo.flags, WindowCreationInfo::Flags::DisableVSync); }
 
 void GLFW::Window::SwapBuffers() const { glfwSwapBuffers(const_cast<GLFWwindow *>(GetGLFWWindow())); }
 void GLFW::Window::SetWindowTitle(const std::string &title)
@@ -413,6 +414,36 @@ GLFW::Window::~Window()
 		g_windows.erase(it);
 }
 
+void GLFW::Window::Reinitialize(const WindowCreationInfo &info)
+{
+	auto pos = GetPos();
+	auto *w = const_cast<GLFWwindow *>(GetGLFWWindow());
+	auto &ci = info;
+	glfwSetWindowAttrib(w, GLFW_RESIZABLE, ci.resizable ? GLFW_TRUE : GLFW_FALSE);
+	glfwSetWindowAttrib(w, GLFW_DECORATED, ci.decorated ? GLFW_TRUE : GLFW_FALSE);
+	glfwSetWindowAttrib(w, GLFW_AUTO_ICONIFY, ci.autoIconify ? GLFW_TRUE : GLFW_FALSE);
+	glfwSetWindowAttrib(w, GLFW_FLOATING, ci.floating ? GLFW_TRUE : GLFW_FALSE);
+
+	SetWindowTitle(info.title);
+	SetSize(Vector2i {info.width, info.height});
+	GLFWmonitor *monitor = nullptr;
+	if(info.monitor.has_value())
+		monitor = const_cast<GLFWmonitor *>(info.monitor->GetGLFWMonitor());
+	glfwSetWindowMonitor(w, monitor, 0, 0, ci.width, ci.height, ci.refreshRate);
+	SetPos(pos);
+
+	// Only update the properties that we could actually change
+	m_creationInfo.resizable = info.resizable;
+	m_creationInfo.decorated = info.decorated;
+	m_creationInfo.autoIconify = info.autoIconify;
+	m_creationInfo.floating = info.floating;
+	m_creationInfo.width = info.width;
+	m_creationInfo.height = info.height;
+	m_creationInfo.title = info.title;
+	m_creationInfo.monitor = info.monitor;
+	m_creationInfo.refreshRate = info.refreshRate;
+}
+
 std::unique_ptr<GLFW::Window> GLFW::Window::Create(const WindowCreationInfo &info)
 {
 	if(GLFW::initialize() == false)
@@ -457,7 +488,8 @@ std::unique_ptr<GLFW::Window> GLFW::Window::Create(const WindowCreationInfo &inf
 	if(info.monitor.has_value())
 		monitor = const_cast<GLFWmonitor *>(info.monitor->GetGLFWMonitor());
 	glfwWindowHint(GLFW_VISIBLE, umath::is_flag_set(info.flags, WindowCreationInfo::Flags::Windowless) ? GLFW_FALSE : GLFW_TRUE);
-	auto *window = glfwCreateWindow(info.width, info.height, info.title.c_str(), monitor, nullptr);
+	auto *sharedContextWindow = info.sharedContextWindow ? const_cast<GLFWwindow *>(info.sharedContextWindow->GetGLFWWindow()) : nullptr;
+	auto *window = glfwCreateWindow(info.width, info.height, info.title.c_str(), monitor, sharedContextWindow);
 	if(window == nullptr)
 		throw std::runtime_error("Unable to create GLFW Window!");
 	auto vkWindow = std::unique_ptr<Window>(new Window(window));
@@ -564,8 +596,7 @@ std::unique_ptr<GLFW::Window> GLFW::Window::Create(const WindowCreationInfo &inf
 		vkWindow->IMEStatusCallback();
 	});
 	glfwSetWindowUserPointer(window, vkWindow.get());
-	vkWindow->m_api = info.api;
-	vkWindow->m_flags = info.flags;
+	vkWindow->m_creationInfo = info;
 	vkWindow->m_windowTitle = info.title;
 	g_windows.push_back(vkWindow.get());
 	return vkWindow;

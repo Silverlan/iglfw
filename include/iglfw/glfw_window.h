@@ -65,6 +65,7 @@ namespace GLFW {
 		std::optional<Monitor> monitor {};
 		API api = API::None;
 		Flags flags = Flags::None;
+		Window *sharedContextWindow = nullptr;
 	};
 
 	struct DLLGLFW CallbackInterface {
@@ -99,6 +100,7 @@ namespace GLFW {
 		WindowHandle GetHandle();
 		void Remove();
 
+		void Reinitialize(const WindowCreationInfo &info);
 		void SetKeyCallback(const std::function<void(Window &, Key, int, KeyState, Modifier)> &callback);
 		void SetRefreshCallback(const std::function<void(Window &)> &callback);
 		void SetResizeCallback(const std::function<void(Window &, Vector2i)> &callback);
@@ -166,6 +168,7 @@ namespace GLFW {
 		bool IsMaximized() const;
 		std::optional<MonitorBounds> GetMonitorBounds() const;
 		const Monitor *GetMonitor() const;
+		const WindowCreationInfo &GetCreationInfo() const;
 		WindowCreationInfo::API GetAPI() const;
 		void MakeContextCurrent() const;
 		void UpdateWindow(const WindowCreationInfo &info);
@@ -198,8 +201,7 @@ namespace GLFW {
 		GLFWwindow *m_window;
 		std::unique_ptr<Monitor> m_monitor;
 		WindowHandle m_handle;
-		WindowCreationInfo::API m_api = WindowCreationInfo::API::None;
-		WindowCreationInfo::Flags m_flags = WindowCreationInfo::Flags::None;
+		WindowCreationInfo m_creationInfo;
 		bool m_shouldCloseInvoked = false;
 		std::string m_windowTitle;
 		CallbackInterface m_callbackInterface {};
