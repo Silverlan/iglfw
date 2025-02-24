@@ -2,16 +2,20 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-#ifndef __GLFW_CURSOR_H__
-#define __GLFW_CURSOR_H__
+module;
 
-#include "glfw_includes.h"
+#include "includes.hpp"
 #include <sharedutils/def_handle.h>
 #include <vector>
 #include <memory>
 #include <mathutil/uvec.h>
 
-namespace GLFW {
+export module pragma.platform:cursor;
+
+export namespace pragma::platform {
+	enum class DLLGLFW CursorMode : uint32_t { Normal = GLFW_CURSOR_NORMAL, Hidden = GLFW_CURSOR_HIDDEN, Disabled = GLFW_CURSOR_DISABLED };
+	REGISTER_BASIC_ARITHMETIC_OPERATORS(CursorMode);
+
 	class Cursor;
 	DECLARE_BASE_HANDLE(DLLGLFW, Cursor, Cursor);
 
@@ -31,5 +35,3 @@ namespace GLFW {
 		const GLFWcursor *GetGLFWCursor() const;
 	};
 };
-
-#endif

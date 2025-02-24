@@ -2,11 +2,9 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-#ifndef __GLFW_JOYSTICK_H__
-#define __GLFW_JOYSTICK_H__
+module;
 
-#include "glfw_includes.h"
-#include "glfw_keys.h"
+#include "includes.hpp"
 #include <string>
 #include <vector>
 #include <mathutil/uvec.h>
@@ -14,9 +12,13 @@
 #include <functional>
 #include <memory>
 
+export module pragma.platform:joystick;
+
+import :keys;
+
 #pragma warning(push)
 #pragma warning(disable : 4251)
-namespace GLFW {
+export namespace pragma::platform {
 	class DLLGLFW Joystick {
 	  public:
 		static std::shared_ptr<Joystick> Create(int32_t joystickId);
@@ -44,5 +46,3 @@ namespace GLFW {
 	};
 };
 #pragma warning(pop)
-
-#endif

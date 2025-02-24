@@ -2,13 +2,19 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-#include "iglfw/glfw_monitor.h"
-#include "iglfw/glfw_joystick.h"
-#include "iglfw/glfw.h"
+module;
+
 #include <cstring>
 #include <cassert>
+#include <memory>
+#include <string>
+#include <algorithm>
+#include <mathutil/uvec.h>
+#include <GLFW/glfw3.h>
 
-using namespace GLFW;
+module pragma.platform;
+
+using namespace pragma::platform;
 
 std::shared_ptr<Joystick> Joystick::Create(int32_t joystickId) { return std::shared_ptr<Joystick>(new Joystick(joystickId)); }
 Joystick::Joystick(int32_t joystickId) : m_joystickId(joystickId) {}
@@ -49,7 +55,7 @@ void Joystick::Poll()
 	if(values != nullptr) {
 		InitializeAxes(count);
 		memcpy(m_axes.data(), values, sizeof(values[0]) * count);
-		auto threshold = GLFW::get_joystick_axis_threshold();
+		auto threshold = pragma::platform::get_joystick_axis_threshold();
 		for(auto &axis : m_axes) {
 			if(umath::abs(axis) < threshold)
 				axis = 0.f;

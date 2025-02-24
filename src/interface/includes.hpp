@@ -11,6 +11,6 @@
 #pragma warning(disable : 4005)
 #include <GLFW/glfw3.h>
 #pragma warning(default : 4005)
-#include "glfw_definitions.h"
+#include "definitions.hpp"
 
 #endif

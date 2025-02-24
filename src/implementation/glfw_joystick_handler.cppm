@@ -1,11 +1,18 @@
-#ifndef __IMPL_GLFW_JOYSTICK_HANDLER_H__
-#define __IMPL_GLFW_JOYSTICK_HANDLER_H__
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-#include "iglfw/glfw_definitions.h"
-#include "iglfw/glfw_joystick.h"
+module;
+
+#include "interface/definitions.hpp"
+#include <GLFW/glfw3.h>
 #include <memory>
 
-namespace GLFW {
+export module pragma.platform:joystick_handler;
+
+import :joystick;
+
+namespace pragma::platform {
 	class JoystickHandler {
 	  public:
 		static JoystickHandler &GetInstance();
@@ -27,5 +34,3 @@ namespace GLFW {
 		std::function<void(const Joystick &, JoystickState)> m_joystickStateCallback = nullptr;
 	};
 };
-
-#endif

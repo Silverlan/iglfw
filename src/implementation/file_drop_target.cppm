@@ -2,19 +2,25 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-#ifndef __GLFW_FILE_DROP_TARGET_HPP__
-#define __GLFW_FILE_DROP_TARGET_HPP__
+module;
 
 #ifdef _WIN32
 
-#include "iglfw/glfw_window.h"
 #include <sharedutils/util_string.h>
 #include <shlobj.h>
 
-namespace GLFW {
+#endif
+
+export module pragma.platform:file_drop_target;
+
+import :window;
+
+#ifdef _WIN32
+
+export namespace pragma::platform {
 	class FileDropTarget : public IDropTarget {
 	  public:
-		FileDropTarget(GLFW::Window &window) : refCount {1}, m_window {window} {}
+		FileDropTarget(pragma::platform::Window &window) : refCount {1}, m_window {window} {}
 
 		HRESULT __stdcall QueryInterface(REFIID riid, void **ppvObject) override
 		{
@@ -96,9 +102,7 @@ namespace GLFW {
 		}
 	  private:
 		LONG refCount;
-		GLFW::Window &m_window;
+		pragma::platform::Window &m_window;
 	};
 };
-#endif
-
 #endif

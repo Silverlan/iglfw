@@ -2,21 +2,21 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-#ifndef __GLFW_H__
-#define __GLFW_H__
+module;
 
-#include "glfw_includes.h"
+#include "includes.hpp"
+#include <mathutil/umath.h>
 #include <string>
 #include <vector>
 #include <functional>
 #include <memory>
-#include "glfw_monitor.h"
-#include "glfw_joystick.h"
 
-namespace GLFW {
-	enum class DLLGLFW CursorMode : uint32_t { Normal = GLFW_CURSOR_NORMAL, Hidden = GLFW_CURSOR_HIDDEN, Disabled = GLFW_CURSOR_DISABLED };
-	REGISTER_BASIC_ARITHMETIC_OPERATORS(CursorMode);
+export module pragma.platform:core;
 
+import :monitor;
+import :joystick;
+
+export namespace pragma::platform {
 	DLLGLFW bool initialize();
 	DLLGLFW void terminate();
 	DLLGLFW void get_version(int *major, int *minor, int *rev);
@@ -41,6 +41,5 @@ namespace GLFW {
 	DLLGLFW Monitor get_primary_monitor();
 	DLLGLFW std::vector<Monitor> get_monitors();
 	DLLGLFW bool is_initialized();
+	DLLGLFW void set_swap_interval(int interval);
 };
-
-#endif

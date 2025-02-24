@@ -1,0 +1,165 @@
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
+module;
+
+#ifdef _WIN32
+#include <oleidl.h>
+#endif
+#include <string>
+#include <functional>
+
+#include <GLFW/glfw3.h>
+
+#pragma comment(lib, "glfw3dll.lib")
+#pragma comment(lib, "mathutil.lib")
+
+module pragma.platform;
+
+import :joystick_handler;
+
+static bool bIsInitialized = false;
+static pragma::platform::JoystickHandler *s_joystickHandler = nullptr;
+bool pragma::platform::initialize()
+{
+	if(bIsInitialized)
+		return bIsInitialized;
+	auto r = (glfwInit() != GLFW_FALSE) ? true : false;
+	bIsInitialized = r;
+#ifdef _WIN32
+	OleInitialize(nullptr);
+#endif
+	return r;
+}
+
+void pragma::platform::terminate()
+{
+	if(bIsInitialized == false)
+		return;
+	set_joysticks_enabled(false);
+	glfwTerminate();
+#ifdef _WIN32
+	OleUninitialize();
+#endif
+}
+
+void pragma::platform::set_swap_interval(int interval) { glfwSwapInterval(interval); }
+
+bool pragma::platform::is_initialized() { return bIsInitialized; }
+
+void pragma::platform::get_version(int *major, int *minor, int *rev) { glfwGetVersion(major, minor, rev); }
+
+std::string pragma::platform::get_version_string() { return glfwGetVersionString(); }
+
+void pragma::platform::poll_events()
+{
+	glfwPollEvents();
+	for(auto *window : pragma::platform::Window::GetWindows())
+		window->Poll();
+}
+void pragma::platform::poll_joystick_events()
+{
+	if(s_joystickHandler != nullptr)
+		s_joystickHandler->Poll();
+}
+void pragma::platform::wait_events() { glfwWaitEvents(); }
+void pragma::platform::post_empty_events() { glfwPostEmptyEvent(); }
+double pragma::platform::get_time() { return glfwGetTime(); }
+void pragma::platform::set_time(double t) { glfwSetTime(t); }
+
+static std::function<void(pragma::platform::Monitor, bool)> monitor_callback = nullptr;
+void pragma::platform::set_monitor_callback(const std::function<void(Monitor, bool)> &callback)
+{
+	monitor_callback = callback;
+	glfwSetMonitorCallback([](GLFWmonitor *monitor, int ev) { monitor_callback(Monitor(monitor), (ev == GLFW_CONNECTED) ? true : false); });
+}
+void pragma::platform::set_joystick_state_callback(const std::function<void(const Joystick &, bool)> &callback)
+{
+	if(s_joystickHandler == nullptr)
+		return;
+	if(callback == nullptr) {
+		s_joystickHandler->SetJoystickStateCallback(nullptr);
+		return;
+	}
+	s_joystickHandler->SetJoystickStateCallback([callback](const pragma::platform::Joystick &joystick, pragma::platform::JoystickHandler::JoystickState state) { callback(joystick, (state == pragma::platform::JoystickHandler::JoystickState::Connected) ? true : false); });
+}
+void pragma::platform::set_joystick_button_callback(const std::function<void(const Joystick &, uint32_t, KeyState, KeyState)> &callback)
+{
+	if(s_joystickHandler == nullptr)
+		return;
+	s_joystickHandler->SetJoystickButtonCallback(callback);
+}
+void pragma::platform::set_joystick_axis_callback(const std::function<void(const Joystick &, uint32_t, float, float)> &callback)
+{
+	if(s_joystickHandler == nullptr)
+		return;
+	s_joystickHandler->SetJoystickAxisCallback(callback);
+}
+
+void pragma::platform::set_joysticks_enabled(bool b)
+{
+	if(is_initialized() == false)
+		return;
+	if(b == false) {
+		if(s_joystickHandler != nullptr) {
+			s_joystickHandler->Release();
+			s_joystickHandler = nullptr;
+		}
+		return;
+	}
+	if(s_joystickHandler != nullptr)
+		return;
+	s_joystickHandler = &JoystickHandler::GetInstance();
+}
+
+static auto s_axisThreshold = 0.f;
+void pragma::platform::set_joystick_axis_threshold(float threshold) { s_axisThreshold = threshold; }
+float pragma::platform::get_joystick_axis_threshold() { return s_axisThreshold; }
+
+const std::vector<std::shared_ptr<pragma::platform::Joystick>> &pragma::platform::get_joysticks()
+{
+	if(s_joystickHandler == nullptr) {
+		static std::vector<std::shared_ptr<pragma::platform::Joystick>> r {};
+		return r;
+	}
+	return s_joystickHandler->GetJoysticks();
+}
+
+std::string pragma::platform::get_joystick_name(uint32_t joystickId)
+{
+	auto &joysticks = get_joysticks();
+	if(joystickId >= joysticks.size())
+		return "";
+	return joysticks.at(joystickId)->GetName();
+}
+const std::vector<float> &pragma::platform::get_joystick_axes(uint32_t joystickId)
+{
+	auto &joysticks = get_joysticks();
+	if(joystickId >= joysticks.size()) {
+		static std::vector<float> r {};
+		return r;
+	}
+	return joysticks.at(joystickId)->GetAxes();
+}
+const std::vector<pragma::platform::KeyState> &pragma::platform::get_joystick_buttons(uint32_t joystickId)
+{
+	auto &joysticks = get_joysticks();
+	if(joystickId >= joysticks.size()) {
+		static std::vector<pragma::platform::KeyState> r {};
+		return r;
+	}
+	return joysticks.at(joystickId)->GetButtons();
+}
+
+pragma::platform::Monitor pragma::platform::get_primary_monitor() { return pragma::platform::Monitor(glfwGetPrimaryMonitor()); }
+std::vector<pragma::platform::Monitor> pragma::platform::get_monitors()
+{
+	std::vector<pragma::platform::Monitor> r;
+	int count = 0;
+	auto *monitors = glfwGetMonitors(&count);
+	r.reserve(count);
+	for(auto i = decltype(count) {0}; i < count; ++i)
+		r.push_back(Monitor(monitors[i]));
+	return r;
+}

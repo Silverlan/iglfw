@@ -2,23 +2,28 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-#ifndef __GLFW_WINDOW_H__
-#define __GLFW_WINDOW_H__
+module;
 
-#include "glfw.h"
+#include "definitions.hpp"
 #include <sharedutils/def_handle.h>
+#include <mathutil/color.h>
 #include <mathutil/uvec.h>
 #include <memory>
 #include <string>
 #include <optional>
 #include <functional>
-#include "glfw_cursor.h"
-#include "glfw_monitor.h"
+#include <glfw/glfw3.h>
+
+export module pragma.platform:window;
+
+import :monitor;
+import :keys;
+import :cursor;
 
 #pragma warning(push)
 #pragma warning(disable : 4251)
-struct Color;
-namespace GLFW {
+export namespace pragma::platform {
+	constexpr int DONT_CARE = GLFW_DONT_CARE;
 #ifdef _WIN32
 	class FileDropTarget;
 #endif
@@ -231,7 +236,5 @@ namespace GLFW {
 #endif
 	};
 };
-REGISTER_BASIC_BITWISE_OPERATORS(GLFW::WindowCreationInfo::Flags)
+export {REGISTER_BASIC_BITWISE_OPERATORS(pragma::platform::WindowCreationInfo::Flags)};
 #pragma warning(pop)
-
-#endif

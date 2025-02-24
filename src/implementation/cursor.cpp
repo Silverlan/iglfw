@@ -2,9 +2,15 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-#include "iglfw/glfw_cursor.h"
+module;
 
-using namespace GLFW;
+#include <sharedutils/def_handle.h>
+#include <mathutil/uvec.h>
+#include <GLFW/glfw3.h>
+
+module pragma.platform;
+
+using namespace pragma::platform;
 
 DEFINE_BASE_HANDLE(, Cursor, Cursor);
 

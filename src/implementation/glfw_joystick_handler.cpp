@@ -2,10 +2,19 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-#include "impl_glfw_joystick_handler.h"
-#include <algorithm>
+module;
 
-using namespace GLFW;
+#include <algorithm>
+#include <memory>
+#include <functional>
+#include <GLFW/glfw3.h>
+
+module pragma.platform;
+
+import :joystick;
+import :joystick_handler;
+
+using namespace pragma::platform;
 
 static std::shared_ptr<JoystickHandler> s_joystickHandler = nullptr;
 JoystickHandler &JoystickHandler::GetInstance()
@@ -28,7 +37,7 @@ JoystickHandler::JoystickHandler()
 			m_joystickStateCallback(*m_joysticks.back(), JoystickState::Connected);
 		auto &joystick = m_joysticks.back();
 		auto *ptrJoystick = joystick.get();
-		joystick->SetButtonCallback([this, ptrJoystick](uint32_t button, GLFW::KeyState oldState, GLFW::KeyState newState) {
+		joystick->SetButtonCallback([this, ptrJoystick](uint32_t button, pragma::platform::KeyState oldState, pragma::platform::KeyState newState) {
 			if(m_joystickButtonCallback == nullptr)
 				return;
 			m_joystickButtonCallback(*ptrJoystick, button, oldState, newState);

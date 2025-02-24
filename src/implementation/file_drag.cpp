@@ -2,16 +2,25 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-#ifdef _WIN32
-#include "file_drop_target.hpp"
-#include "iglfw/glfw_window.h"
+module;
 
-void GLFW::Window::InitFileDropHandler()
+#include <memory>
+#ifdef _WIN32
+#include <Ole2.h>
+#endif
+
+module pragma.platform;
+
+#ifdef _WIN32
+
+import :file_drop_target;
+
+void pragma::platform::Window::InitFileDropHandler()
 {
 	m_fileDropTarget = std::make_unique<FileDropTarget>(*this);
 	RegisterDragDrop(GetWin32Handle(), m_fileDropTarget.get());
 }
-void GLFW::Window::ReleaseFileDropHandler()
+void pragma::platform::Window::ReleaseFileDropHandler()
 {
 	RevokeDragDrop(GetWin32Handle());
 	m_fileDropTarget->Release();

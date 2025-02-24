@@ -2,16 +2,17 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-#ifndef __GLFW_MONITOR_H__
-#define __GLFW_MONITOR_H__
+module;
 
-#include "glfw_includes.h"
+#include "includes.hpp"
 #include <string>
 #include <vector>
 #include <mathutil/uvec.h>
 #include <mathutil/color.h>
 
-namespace GLFW {
+export module pragma.platform:monitor;
+
+export namespace pragma::platform {
 	class DLLGLFW Monitor {
 	  public:
 		using VideoMode = GLFWvidmode;
@@ -31,5 +32,3 @@ namespace GLFW {
 		std::vector<VideoMode> GetSupportedVideoModes() const;
 	};
 };
-
-#endif
