@@ -6,6 +6,7 @@ module;
 
 #include "interface/definitions.hpp"
 #include <GLFW/glfw3.h>
+#include <functional>
 #include <memory>
 
 export module pragma.platform:joystick_handler;

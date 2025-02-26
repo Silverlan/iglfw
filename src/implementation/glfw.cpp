@@ -8,6 +8,7 @@ module;
 #include <oleidl.h>
 #endif
 #include <string>
+#include <memory>
 #include <functional>
 
 #include <GLFW/glfw3.h>
