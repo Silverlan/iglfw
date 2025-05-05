@@ -130,7 +130,9 @@ export namespace pragma::platform {
 		const CallbackInterface &GetCallbacks() const;
 
 		void SetBorderColor(const Color &color);
+		std::optional<Color> GetBorderColor() const;
 		void SetTitleBarColor(const Color &color);
+		std::optional<Color> GetTitleBarColor() const;
 
 		bool ShouldClose() const;
 		void SetShouldClose(bool b);
@@ -210,6 +212,8 @@ export namespace pragma::platform {
 		bool m_shouldCloseInvoked = false;
 		std::string m_windowTitle;
 		CallbackInterface m_callbackInterface {};
+		std::optional<Color> m_borderColor {};
+		std::optional<Color> m_titleBarColor {};
 		std::optional<Vector2> m_cursorPosOverride = {};
 		void KeyCallback(int key, int scancode, int action, int mods);
 		void RefreshCallback();

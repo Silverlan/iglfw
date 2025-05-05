@@ -266,6 +266,7 @@ Vector2i pragma::platform::Window::GetPos() const
 
 void pragma::platform::Window::SetBorderColor(const Color &color)
 {
+	m_borderColor = color;
 #ifdef _WIN32
 
 #if defined(WINVER) && (WINVER >= 0x0501)
@@ -281,8 +282,10 @@ void pragma::platform::Window::SetBorderColor(const Color &color)
 	// Not yet implemented
 #endif
 }
+std::optional<Color> pragma::platform::Window::GetBorderColor() const { return m_borderColor; }
 void pragma::platform::Window::SetTitleBarColor(const Color &color)
 {
+	m_titleBarColor = color;
 #ifdef _WIN32
 
 #if defined(WINVER) && (WINVER >= 0x0A00)
@@ -298,6 +301,7 @@ void pragma::platform::Window::SetTitleBarColor(const Color &color)
 	// Not yet implemented
 #endif
 }
+std::optional<Color> pragma::platform::Window::GetTitleBarColor() const { return m_titleBarColor; }
 
 void pragma::platform::Window::SetPos(const Vector2i &pos) { glfwSetWindowPos(const_cast<GLFWwindow *>(GetGLFWWindow()), pos.x, pos.y); }
 Vector2i pragma::platform::Window::GetSize() const
