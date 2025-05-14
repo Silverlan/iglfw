@@ -45,6 +45,24 @@ void pragma::platform::terminate()
 #endif
 }
 
+pragma::platform::Platform pragma::platform::get_platform()
+{
+	auto platform = glfwGetPlatform();
+	switch(platform) {
+	case GLFW_PLATFORM_WIN32:
+		return Platform::Win32;
+	case GLFW_PLATFORM_COCOA:
+		return Platform::Cocoa;
+	case GLFW_PLATFORM_WAYLAND:
+		return Platform::Wayland;
+	case GLFW_PLATFORM_X11:
+		return Platform::X11;
+	default:
+		break;
+	}
+	return Platform::Unknown;
+}
+
 void pragma::platform::set_swap_interval(int interval) { glfwSwapInterval(interval); }
 
 bool pragma::platform::is_initialized() { return bIsInitialized; }

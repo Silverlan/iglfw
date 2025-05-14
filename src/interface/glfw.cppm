@@ -17,8 +17,18 @@ import :monitor;
 import :joystick;
 
 export namespace pragma::platform {
+	enum class Platform : uint8_t {
+		Win32 = 0,
+		Cocoa,
+		Wayland,
+		X11,
+		Unknown,
+
+		Count,
+	};
 	DLLGLFW bool initialize();
 	DLLGLFW void terminate();
+	DLLGLFW Platform get_platform();
 	DLLGLFW void get_version(int *major, int *minor, int *rev);
 	DLLGLFW std::string get_version_string();
 	DLLGLFW void poll_events();
