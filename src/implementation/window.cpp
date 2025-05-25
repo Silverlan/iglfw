@@ -253,7 +253,9 @@ void pragma::platform::Window::SetWindowIcon(uint32_t width, uint32_t height, co
 	iconData.width = width;
 	iconData.height = height;
 	iconData.pixels = const_cast<unsigned char *>(reinterpret_cast<const unsigned char *>(data));
+	// Note: This won't work on Wayland, as Wayland does not support changing the window icon
 	glfwSetWindowIcon(const_cast<GLFWwindow *>(GetGLFWWindow()), 1, &iconData);
+	glfwGetError(nullptr); // Clear any errors that may have occurred
 }
 
 Vector2i pragma::platform::Window::GetPos() const
