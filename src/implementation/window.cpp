@@ -317,6 +317,22 @@ void pragma::platform::Window::SetSize(const Vector2i &size) { glfwSetWindowSize
 
 void pragma::platform::Window::Poll()
 {
+#ifdef __linux__
+	if(m_pendingWaylandDragAndDrop) {
+		auto t = m_pendingWaylandDragAndDrop->t;
+		auto t2 = std::chrono::steady_clock::now();
+		if(t2 - t > std::chrono::milliseconds(100)) {
+			std::vector<const char *> cpaths;
+			cpaths.reserve(m_pendingWaylandDragAndDrop->files.size());
+			for(auto &path : m_pendingWaylandDragAndDrop->files)
+				cpaths.push_back(path.c_str());
+			DropCallback(cpaths.size(), cpaths.data());
+			DragExitCallback();
+			m_pendingWaylandDragAndDrop = {};
+		}
+	}
+#endif
+
 	if(!m_shouldCloseInvoked) {
 		if(ShouldClose()) {
 			m_shouldCloseInvoked = true;
@@ -550,8 +566,45 @@ std::unique_ptr<pragma::platform::Window> pragma::platform::Window::Create(const
 		auto *vkWindow = static_cast<Window *>(glfwGetWindowUserPointer(window));
 		if(vkWindow == nullptr)
 			return;
+#ifdef __linux__
+		auto platform = get_platform();
+		if(platform == Platform::Wayland) {
+			// The drag callback is currently not supported for wayland.
+			// As a work-around, we just trigger DragEnterCallback and DragExitCallback
+			// on drop, to make sure the respective code is still executed.
+			// We also introduce a small delay to simulate a
+			// real drag-and-drop interaction.
+			if(!vkWindow->m_pendingWaylandDragAndDrop) {
+				vkWindow->m_pendingWaylandDragAndDrop = std::unique_ptr<WaylandDragAndDropInfo> {new WaylandDragAndDropInfo {}};
+				vkWindow->m_pendingWaylandDragAndDrop->t = std::chrono::steady_clock::now();
+				vkWindow->DragEnterCallback();
+			}
+			auto &info = *vkWindow->m_pendingWaylandDragAndDrop;
+			info.files.reserve(info.files.size() + count);
+			for(size_t i = 0; i < count; ++i)
+				info.files.push_back(paths[i]);
+			return;
+		}
+#endif
 		vkWindow->DropCallback(count, paths);
 	});
+	// glfwSetDragCallback is currently only implemented for Linux, and only for X11.
+	// Windows drag support is located in file_drop_target.cppm
+	// Wayland is currently not supported (see work-around above).
+	// Once glfwSetDragCallback is officially implemented for all major platforms,
+	// the windows implementation can be removed and the code below can be used.
+	// See https://github.com/glfw/glfw/issues/1898
+#ifdef __linux__
+	glfwSetDragCallback(window, [](GLFWwindow *window, int entered) {
+		auto *vkWindow = static_cast<Window *>(glfwGetWindowUserPointer(window));
+		if(vkWindow == nullptr)
+			return;
+		if(entered == 1)
+			vkWindow->DragEnterCallback();
+		else
+			vkWindow->DragExitCallback();
+	});
+#endif
 	glfwSetMouseButtonCallback(window, [](GLFWwindow *window, int button, int action, int mods) {
 		auto *vkWindow = static_cast<Window *>(glfwGetWindowUserPointer(window));
 		if(vkWindow == nullptr)

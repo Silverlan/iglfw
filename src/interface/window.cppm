@@ -11,6 +11,7 @@ module;
 #include <memory>
 #include <string>
 #include <optional>
+#include <chrono>
 #include <functional>
 #include <GLFW/glfw3.h>
 
@@ -237,6 +238,12 @@ export namespace pragma::platform {
 		std::unique_ptr<FileDropTarget> m_fileDropTarget;
 		void InitFileDropHandler();
 		void ReleaseFileDropHandler();
+#else
+		struct WaylandDragAndDropInfo {
+			std::chrono::steady_clock::time_point t;
+			std::vector<std::string> files;
+		};
+		std::unique_ptr<WaylandDragAndDropInfo> m_pendingWaylandDragAndDrop;
 #endif
 	};
 };
