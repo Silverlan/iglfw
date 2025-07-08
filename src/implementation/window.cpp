@@ -416,6 +416,10 @@ void pragma::platform::Window::SetCursor(const Cursor &cursor)
 	auto *c = cursor.GetGLFWCursor();
 	glfwSetCursor(const_cast<GLFWwindow *>(GetGLFWWindow()), const_cast<GLFWcursor *>(c));
 }
+void pragma::platform::Window::SetCursor(Cursor::Shape shape)
+{
+	SetCursor(Cursor::GetStandardCursor(shape));
+}
 void pragma::platform::Window::ClearCursor() { glfwSetCursor(const_cast<GLFWwindow *>(GetGLFWWindow()), nullptr); }
 
 #ifdef _WIN32

@@ -199,6 +199,7 @@ export namespace pragma::platform {
 		void SetResizable(bool resizable);
 
 		void SetCursor(const Cursor &cursor);
+		void SetCursor(Cursor::Shape shape);
 		void ClearCursor();
 	  private:
 #ifdef _WIN32

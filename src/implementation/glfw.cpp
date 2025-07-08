@@ -12,9 +12,6 @@ module;
 
 #include <GLFW/glfw3.h>
 
-#pragma comment(lib, "glfw3dll.lib")
-#pragma comment(lib, "mathutil.lib")
-
 module pragma.platform;
 
 import :joystick_handler;

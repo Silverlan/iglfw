@@ -27,7 +27,7 @@ export namespace pragma::platform {
 		CursorHandle m_handle;
 	  public:
 		static std::unique_ptr<Cursor> Create(uint32_t width, uint32_t height, unsigned char *data, const Vector2i &hotSpot = Vector2i(0, 0));
-		static std::unique_ptr<Cursor> Create(Shape shape);
+		static Cursor &GetStandardCursor(Shape shape);
 		~Cursor();
 		CursorHandle GetHandle();
 		void Remove();
