@@ -476,7 +476,8 @@ void pragma::platform::Window::Reinitialize(const WindowCreationInfo &info)
 
 std::unique_ptr<pragma::platform::Window> pragma::platform::Window::Create(const WindowCreationInfo &info)
 {
-	if(pragma::platform::initialize() == false)
+	std::string err;
+	if(pragma::platform::initialize(err) == false)
 		throw std::runtime_error("Unable to create GLFW Window: GLFW hasn't been initialized!");
 	glfwDefaultWindowHints();
 	glfwWindowHint(GLFW_RESIZABLE, info.resizable);
@@ -513,6 +514,9 @@ std::unique_ptr<pragma::platform::Window> pragma::platform::Window::Create(const
 
 	if(isOpenGLAPI && umath::is_flag_set(info.flags, WindowCreationInfo::Flags::DebugContext))
 		glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE);
+
+	if (platform::is_headless())
+		glfwWindowHint(GLFW_CONTEXT_CREATION_API, GLFW_OSMESA_CONTEXT_API);
 
 	GLFWmonitor *monitor = nullptr;
 	if(info.monitor.has_value())

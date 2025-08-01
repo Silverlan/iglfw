@@ -16,23 +16,38 @@ module pragma.platform;
 
 import :joystick_handler;
 
-static bool bIsInitialized = false;
+static bool g_initialized = false;
+static bool g_headless = false;
 static pragma::platform::JoystickHandler *s_joystickHandler = nullptr;
-bool pragma::platform::initialize()
+
+bool pragma::platform::initialize(std::string &outErr, bool headless)
 {
-	if(bIsInitialized)
-		return bIsInitialized;
-	auto r = (glfwInit() != GLFW_FALSE) ? true : false;
-	bIsInitialized = r;
+	if(g_initialized)
+		return g_initialized;
+	g_headless = headless;
+	if (headless)
+		glfwInitHint(GLFW_PLATFORM, GLFW_PLATFORM_NULL);
+	auto res = glfwInit();
+	if (res != GLFW_TRUE) {
+		const char* description;
+		int code = glfwGetError(&description);
+		if (description)
+			outErr = std::string{description} +" (" +std::to_string(code) +")!";
+		else
+			outErr = "error " +std::to_string(code) +"!";
+		return false;
+	}
+
+	g_initialized = true;
 #ifdef _WIN32
 	OleInitialize(nullptr);
 #endif
-	return r;
+	return g_initialized;
 }
 
 void pragma::platform::terminate()
 {
-	if(bIsInitialized == false)
+	if(g_initialized == false)
 		return;
 	set_joysticks_enabled(false);
 	glfwTerminate();
@@ -53,6 +68,8 @@ pragma::platform::Platform pragma::platform::get_platform()
 		return Platform::Wayland;
 	case GLFW_PLATFORM_X11:
 		return Platform::X11;
+	case GLFW_PLATFORM_NULL:
+		return Platform::Windowless;
 	default:
 		break;
 	}
@@ -61,7 +78,8 @@ pragma::platform::Platform pragma::platform::get_platform()
 
 void pragma::platform::set_swap_interval(int interval) { glfwSwapInterval(interval); }
 
-bool pragma::platform::is_initialized() { return bIsInitialized; }
+bool pragma::platform::is_initialized() { return g_initialized; }
+bool pragma::platform::is_headless() { return g_headless; }
 
 void pragma::platform::get_version(int *major, int *minor, int *rev) { glfwGetVersion(major, minor, rev); }
 

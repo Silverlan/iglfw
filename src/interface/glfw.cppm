@@ -21,11 +21,12 @@ export namespace pragma::platform {
 		Cocoa,
 		Wayland,
 		X11,
+		Windowless,
 		Unknown,
 
 		Count,
 	};
-	DLLGLFW bool initialize();
+	DLLGLFW bool initialize(std::string &outErr, bool headless = false);
 	DLLGLFW void terminate();
 	DLLGLFW Platform get_platform();
 	DLLGLFW void get_version(int *major, int *minor, int *rev);
@@ -50,5 +51,6 @@ export namespace pragma::platform {
 	DLLGLFW Monitor get_primary_monitor();
 	DLLGLFW std::vector<Monitor> get_monitors();
 	DLLGLFW bool is_initialized();
+	DLLGLFW bool is_headless();
 	DLLGLFW void set_swap_interval(int interval);
 };
