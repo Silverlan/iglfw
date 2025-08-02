@@ -24,17 +24,21 @@ bool pragma::platform::initialize(std::string &outErr, bool headless)
 {
 	if(g_initialized)
 		return g_initialized;
+#ifdef _WIN32
+	// On Windows we can just use the Win32 platform for headless rendering
+	headless = false;
+#endif
 	g_headless = headless;
-	if (headless)
+	if(headless)
 		glfwInitHint(GLFW_PLATFORM, GLFW_PLATFORM_NULL);
 	auto res = glfwInit();
-	if (res != GLFW_TRUE) {
-		const char* description;
+	if(res != GLFW_TRUE) {
+		const char *description;
 		int code = glfwGetError(&description);
-		if (description)
-			outErr = std::string{description} +" (" +std::to_string(code) +")!";
+		if(description)
+			outErr = std::string {description} + " (" + std::to_string(code) + ")!";
 		else
-			outErr = "error " +std::to_string(code) +"!";
+			outErr = "error " + std::to_string(code) + "!";
 		return false;
 	}
 
