@@ -156,6 +156,7 @@ export namespace pragma::platform {
 		void ResetPreeditText();
 		void SetIMEEnabled(bool enabled);
 		bool IsIMEEnabled() const;
+		bool IsInFocus() const;
 		void SwapBuffers() const;
 		void SetWindowTitle(const std::string &title);
 		const std::string &GetWindowTitle() const;

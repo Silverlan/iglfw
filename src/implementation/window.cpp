@@ -231,6 +231,7 @@ void pragma::platform::Window::GetPreeditCursorRectangle(int32_t &outX, int32_t 
 void pragma::platform::Window::ResetPreeditText() { glfwResetPreeditText(const_cast<GLFWwindow *>(GetGLFWWindow())); }
 void pragma::platform::Window::SetIMEEnabled(bool enabled) { return glfwSetInputMode(const_cast<GLFWwindow *>(GetGLFWWindow()), GLFW_IME, enabled ? GLFW_TRUE : GLFW_FALSE); }
 bool pragma::platform::Window::IsIMEEnabled() const { return (glfwGetInputMode(const_cast<GLFWwindow *>(GetGLFWWindow()), GLFW_IME) == GLFW_TRUE) ? true : false; }
+bool pragma::platform::Window::IsInFocus() const { return glfwGetWindowAttrib(const_cast<GLFWwindow *>(GetGLFWWindow()), GLFW_FOCUSED) == GLFW_TRUE; }
 
 void pragma::platform::Window::SetVSyncEnabled(bool enabled)
 {
