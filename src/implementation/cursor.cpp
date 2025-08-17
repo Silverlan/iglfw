@@ -40,7 +40,7 @@ Cursor &Cursor::GetStandardCursor(Shape shape)
 {
 	static std::unordered_map<pragma::platform::Cursor::Shape, std::unique_ptr<pragma::platform::Cursor>> g_standardCursors;
 	auto it = g_standardCursors.find(shape);
-	if (it == g_standardCursors.end()) {
+	if(it == g_standardCursors.end()) {
 		auto *glfwCursor = glfwCreateStandardCursor(static_cast<int>(shape));
 		std::unique_ptr<Cursor> cursor {new Cursor(glfwCursor)};
 		it = g_standardCursors.insert(std::make_pair(shape, std::move(cursor))).first;

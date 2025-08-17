@@ -417,10 +417,7 @@ void pragma::platform::Window::SetCursor(const Cursor &cursor)
 	auto *c = cursor.GetGLFWCursor();
 	glfwSetCursor(const_cast<GLFWwindow *>(GetGLFWWindow()), const_cast<GLFWcursor *>(c));
 }
-void pragma::platform::Window::SetCursor(Cursor::Shape shape)
-{
-	SetCursor(Cursor::GetStandardCursor(shape));
-}
+void pragma::platform::Window::SetCursor(Cursor::Shape shape) { SetCursor(Cursor::GetStandardCursor(shape)); }
 void pragma::platform::Window::ClearCursor() { glfwSetCursor(const_cast<GLFWwindow *>(GetGLFWWindow()), nullptr); }
 
 #ifdef _WIN32
@@ -516,7 +513,7 @@ std::unique_ptr<pragma::platform::Window> pragma::platform::Window::Create(const
 	if(isOpenGLAPI && umath::is_flag_set(info.flags, WindowCreationInfo::Flags::DebugContext))
 		glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE);
 
-	if (platform::is_headless())
+	if(platform::is_headless())
 		glfwWindowHint(GLFW_CONTEXT_CREATION_API, GLFW_OSMESA_CONTEXT_API);
 
 	GLFWmonitor *monitor = nullptr;
