@@ -4,9 +4,9 @@
 module;
 
 #include "definitions.hpp"
-#include <sharedutils/def_handle.h>
 #include <mathutil/color.h>
 #include <mathutil/uvec.h>
+#include "sharedutils/util_handle.hpp"
 #include <memory>
 #include <string>
 #include <optional>
@@ -28,7 +28,7 @@ export namespace pragma::platform {
 	class FileDropTarget;
 #endif
 	class Window;
-	DECLARE_BASE_HANDLE(DLLGLFW, Window, Window);
+	using WindowHandle = util::THandle<Window>;
 
 	struct DLLGLFW MonitorBounds {
 		Vector2 monitorPos;

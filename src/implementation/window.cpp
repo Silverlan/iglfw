@@ -4,6 +4,7 @@
 module;
 
 #include <mathutil/color.h>
+#include "sharedutils/util_handle.hpp"
 #ifdef _WIN32
 
 #define GLFW_EXPOSE_NATIVE_WGL
@@ -18,7 +19,6 @@ module;
 #include <GLFW/glfw3.h>
 #include <GLFW/glfw3native.h>
 #include <sharedutils/util.h>
-#include <sharedutils/def_handle.h>
 #include <algorithm>
 #include <cassert>
 
@@ -29,17 +29,13 @@ module pragma.platform;
 
 import :file_drop_target;
 
-namespace pragma::platform {
-	DEFINE_BASE_HANDLE(, pragma::platform::Window, Window);
-};
-
 pragma::platform::WindowCreationInfo::WindowCreationInfo()
     : resizable(true), visible(true), decorated(true), focused(true), autoIconify(true), floating(false), stereo(false), srgbCapable(false), doublebuffer(true), refreshRate(GLFW_DONT_CARE), samples(0), redBits(8), greenBits(8), blueBits(8), alphaBits(8), depthBits(24), stencilBits(8),
       width(800), height(600), monitor(nullptr)
 {
 }
 
-pragma::platform::Window::Window(GLFWwindow *window) : m_handle(new PtrWindow(this)), m_window(window), m_monitor(nullptr)
+pragma::platform::Window::Window(GLFWwindow *window) : m_handle(util::create_handle<Window>(this)), m_window(window), m_monitor(nullptr)
 {
 	auto *monitor = glfwGetWindowMonitor(m_window);
 	if(monitor != nullptr)

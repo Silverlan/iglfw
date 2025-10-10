@@ -4,7 +4,7 @@
 module;
 
 #include "includes.hpp"
-#include <sharedutils/def_handle.h>
+#include "sharedutils/util_handle.hpp"
 #include <vector>
 #include <memory>
 #include <mathutil/uvec.h>
@@ -12,11 +12,11 @@ module;
 export module pragma.platform:cursor;
 
 export namespace pragma::platform {
-	enum class DLLGLFW CursorMode : uint32_t { Normal = GLFW_CURSOR_NORMAL, Hidden = GLFW_CURSOR_HIDDEN, Disabled = GLFW_CURSOR_DISABLED };
+	enum class CursorMode : uint32_t { Normal = GLFW_CURSOR_NORMAL, Hidden = GLFW_CURSOR_HIDDEN, Disabled = GLFW_CURSOR_DISABLED };
 	REGISTER_BASIC_ARITHMETIC_OPERATORS(CursorMode);
 
 	class Cursor;
-	DECLARE_BASE_HANDLE(DLLGLFW, Cursor, Cursor);
+	using CursorHandle = util::THandle<Cursor>;
 
 	class DLLGLFW Cursor {
 	  public:
