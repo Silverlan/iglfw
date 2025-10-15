@@ -6,8 +6,6 @@ module;
 #include "includes.hpp"
 #include <string>
 #include <vector>
-#include <mathutil/uvec.h>
-#include <mathutil/color.h>
 #include <functional>
 #include <memory>
 

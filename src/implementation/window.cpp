@@ -3,8 +3,12 @@
 
 module;
 
-#include <mathutil/color.h>
-#include "sharedutils/util_handle.hpp"
+#include "mathutil/glmutil.h"
+#include <memory>
+#include <string>
+#include <vector>
+#include <stdexcept>
+#include <sstream>
 #ifdef _WIN32
 
 #define GLFW_EXPOSE_NATIVE_WGL
@@ -18,7 +22,6 @@ module;
 #endif
 #include <GLFW/glfw3.h>
 #include <GLFW/glfw3native.h>
-#include <sharedutils/util.h>
 #include <algorithm>
 #include <cassert>
 
@@ -271,7 +274,7 @@ void pragma::platform::Window::SetBorderColor(const Color &color)
 	auto tmp = color;
 	umath::swap(tmp.r, tmp.b);
 	auto hex = tmp.ToHexColorRGB();
-	COLORREF hexCol = ::util::to_hex_number("0x" + hex);
+	COLORREF hexCol = ::umath::to_hex_number("0x" + hex);
 	const DWORD ATTR_BORDER_COLOR = 34; // See DWMWINDOWATTRIBUTE::DWMWA_BORDER_COLOR, can't use the enum because it may not be available and there's no way to check for it
 	DwmSetWindowAttribute(GetWin32Handle(), ATTR_BORDER_COLOR, &hexCol, sizeof(hexCol));
 #endif
@@ -290,7 +293,7 @@ void pragma::platform::Window::SetTitleBarColor(const Color &color)
 	auto tmp = color;
 	umath::swap(tmp.r, tmp.b);
 	auto hex = tmp.ToHexColorRGB();
-	COLORREF hexCol = ::util::to_hex_number("0x" + hex);
+	COLORREF hexCol = ::umath::to_hex_number("0x" + hex);
 	const DWORD ATTR_CAPTION_COLOR = 35; // See DWMWINDOWATTRIBUTE::DWMWA_CAPTION_COLOR, can't use the enum because it may not be available and there's no way to check for it
 	DwmSetWindowAttribute(GetWin32Handle(), ATTR_CAPTION_COLOR, &hexCol, sizeof(hexCol));
 #endif

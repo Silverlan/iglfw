@@ -6,10 +6,10 @@ module;
 #include "includes.hpp"
 #include <string>
 #include <vector>
-#include <mathutil/uvec.h>
-#include <mathutil/color.h>
 
 export module pragma.platform:monitor;
+
+export import pragma.math;
 
 export namespace pragma::platform {
 	class DLLGLFW Monitor {

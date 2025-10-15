@@ -3,9 +3,10 @@
 
 module;
 
+#include <string>
+#include <vector>
 #ifdef _WIN32
 
-#include <sharedutils/util_string.h>
 #include <shlobj.h>
 
 #endif

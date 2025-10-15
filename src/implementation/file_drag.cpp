@@ -7,6 +7,8 @@ module;
 #ifdef _WIN32
 #include <Ole2.h>
 #endif
+#include <string>
+#include <vector>
 
 module pragma.platform;
 

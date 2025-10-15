@@ -4,14 +4,14 @@
 module;
 
 #include "definitions.hpp"
-#include <mathutil/color.h>
-#include <mathutil/uvec.h>
-#include "sharedutils/util_handle.hpp"
 #include <memory>
 #include <string>
 #include <optional>
 #include <chrono>
 #include <functional>
+#ifdef _WIN32
+#include <Windows.h>
+#endif
 #include <GLFW/glfw3.h>
 
 export module pragma.platform:window;
@@ -247,6 +247,12 @@ export namespace pragma::platform {
 		std::unique_ptr<WaylandDragAndDropInfo> m_pendingWaylandDragAndDrop;
 #endif
 	};
+	using namespace umath::scoped_enum::bitwise;
 };
-export {REGISTER_BASIC_BITWISE_OPERATORS(pragma::platform::WindowCreationInfo::Flags)};
+export {
+	namespace umath::scoped_enum::bitwise {
+		template<>
+		struct enable_bitwise_operators<pragma::platform::WindowCreationInfo::Flags> : std::true_type {};
+	}
+};
 #pragma warning(pop)
