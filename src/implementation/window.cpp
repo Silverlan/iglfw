@@ -8,6 +8,7 @@ module;
 #include <string>
 #include <vector>
 #include <stdexcept>
+#include <functional>
 #include <sstream>
 #ifdef _WIN32
 
