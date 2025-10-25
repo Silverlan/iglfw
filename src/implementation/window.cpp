@@ -3,6 +3,10 @@
 
 module;
 
+#include <chrono>
+
+#include <optional>
+
 #include "mathutil/glmutil.h"
 #include <memory>
 #include <string>
