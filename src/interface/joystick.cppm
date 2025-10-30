@@ -4,10 +4,6 @@
 module;
 
 #include "includes.hpp"
-#include <string>
-#include <vector>
-#include <functional>
-#include <memory>
 
 export module pragma.platform:joystick;
 

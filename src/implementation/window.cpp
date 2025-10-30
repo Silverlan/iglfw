@@ -3,17 +3,9 @@
 
 module;
 
-#include <chrono>
 
-#include <optional>
 
 #include "mathutil/glmutil.h"
-#include <memory>
-#include <string>
-#include <vector>
-#include <stdexcept>
-#include <functional>
-#include <sstream>
 #ifdef _WIN32
 
 #define GLFW_EXPOSE_NATIVE_WGL
@@ -27,7 +19,6 @@ module;
 #endif
 #include <GLFW/glfw3.h>
 #include <GLFW/glfw3native.h>
-#include <algorithm>
 #include <cassert>
 
 #undef API

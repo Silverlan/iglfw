@@ -3,12 +3,7 @@
 
 module;
 
-#include <cstring>
 #include <cassert>
-#include <memory>
-#include <string>
-#include <algorithm>
-#include <functional>
 #include <GLFW/glfw3.h>
 
 module pragma.platform;

@@ -3,8 +3,6 @@
 
 module;
 
-#include <string>
-#include <vector>
 #ifdef _WIN32
 
 #include <shlobj.h>

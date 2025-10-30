@@ -3,9 +3,6 @@
 
 module;
 
-#include <algorithm>
-#include <memory>
-#include <functional>
 #include <GLFW/glfw3.h>
 
 module pragma.platform;

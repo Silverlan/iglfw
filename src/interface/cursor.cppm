@@ -4,8 +4,6 @@
 module;
 
 #include "includes.hpp"
-#include <vector>
-#include <memory>
 
 export module pragma.platform:cursor;
 

@@ -4,8 +4,6 @@
 module;
 
 #include "includes.hpp"
-#include <string>
-#include <vector>
 
 export module pragma.platform:monitor;
 
