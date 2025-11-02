@@ -157,19 +157,11 @@ export {
         enum class Modifier : uint32_t { None = 0, Shift = GLFW_MOD_SHIFT, Control = GLFW_MOD_CONTROL, Alt = GLFW_MOD_ALT, Super = GLFW_MOD_SUPER, AxisInput = Super << 1, AxisPress = AxisInput << 1, AxisRelease = AxisPress << 1, AxisNegative = AxisRelease << 1 };
         enum class InputMode : uint32_t { Cursor = GLFW_CURSOR, StickyKeys = GLFW_STICKY_KEYS, StickyMouseButtons = GLFW_STICKY_MOUSE_BUTTONS };
 
-        using namespace umath::scoped_enum::arithmetic;
+        using namespace umath::scoped_enum::bitwise;
     }
 
-	namespace umath::scoped_enum::arithmetic {
+	namespace umath::scoped_enum::bitwise {
 		template<>
-		struct enable_arithmetic_operators<pragma::platform::Key> : std::true_type {};
-		template<>
-		struct enable_arithmetic_operators<pragma::platform::MouseButton> : std::true_type {};
-		template<>
-		struct enable_arithmetic_operators<pragma::platform::KeyState> : std::true_type {};
-		template<>
-		struct enable_arithmetic_operators<pragma::platform::Modifier> : std::true_type {};
-		template<>
-		struct enable_arithmetic_operators<pragma::platform::InputMode> : std::true_type {};
+		struct enable_bitwise_operators<pragma::platform::Modifier> : std::true_type {};
 	}
 }
