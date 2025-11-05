@@ -3,9 +3,6 @@
 
 module;
 
-
-
-#include "mathutil/glmutil.h"
 #ifdef _WIN32
 
 #define GLFW_EXPOSE_NATIVE_WGL

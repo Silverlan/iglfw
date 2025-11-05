@@ -3,7 +3,6 @@
 
 module;
 
-
 #include <GLFW/glfw3.h>
 
 module pragma.platform;
