@@ -5,7 +5,6 @@ module;
 
 #ifdef _WIN32
 
-#include <sharedutils/util_string.h>
 #include <shlobj.h>
 
 #endif

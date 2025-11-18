@@ -3,7 +3,6 @@
 
 module;
 
-#include <memory>
 #ifdef _WIN32
 #include <Ole2.h>
 #endif

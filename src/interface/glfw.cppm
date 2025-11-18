@@ -4,11 +4,6 @@
 module;
 
 #include "includes.hpp"
-#include <mathutil/umath.h>
-#include <string>
-#include <vector>
-#include <functional>
-#include <memory>
 
 export module pragma.platform:core;
 

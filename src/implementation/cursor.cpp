@@ -3,19 +3,19 @@
 
 module;
 
-#include <sharedutils/def_handle.h>
-#include <mathutil/uvec.h>
 #include <GLFW/glfw3.h>
 
 module pragma.platform;
 
 using namespace pragma::platform;
 
-DEFINE_BASE_HANDLE(, Cursor, Cursor);
+Cursor::Cursor(GLFWcursor *cursor) : m_handle(util::create_handle<Cursor>(this)), m_cursor(cursor) {}
 
-Cursor::Cursor(GLFWcursor *cursor) : m_handle(new PtrCursor(this)), m_cursor(cursor) {}
-
-Cursor::~Cursor() { glfwDestroyCursor(m_cursor); }
+Cursor::~Cursor()
+{
+	m_handle.Invalidate();
+	glfwDestroyCursor(m_cursor);
+}
 
 CursorHandle Cursor::GetHandle() { return m_handle; }
 

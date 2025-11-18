@@ -3,7 +3,6 @@
 
 module;
 
-#include <mathutil/color.h>
 #ifdef _WIN32
 
 #define GLFW_EXPOSE_NATIVE_WGL
@@ -17,9 +16,6 @@ module;
 #endif
 #include <GLFW/glfw3.h>
 #include <GLFW/glfw3native.h>
-#include <sharedutils/util.h>
-#include <sharedutils/def_handle.h>
-#include <algorithm>
 #include <cassert>
 
 #undef API
@@ -29,17 +25,13 @@ module pragma.platform;
 
 import :file_drop_target;
 
-namespace pragma::platform {
-	DEFINE_BASE_HANDLE(, pragma::platform::Window, Window);
-};
-
 pragma::platform::WindowCreationInfo::WindowCreationInfo()
     : resizable(true), visible(true), decorated(true), focused(true), autoIconify(true), floating(false), stereo(false), srgbCapable(false), doublebuffer(true), refreshRate(GLFW_DONT_CARE), samples(0), redBits(8), greenBits(8), blueBits(8), alphaBits(8), depthBits(24), stencilBits(8),
       width(800), height(600), monitor(nullptr)
 {
 }
 
-pragma::platform::Window::Window(GLFWwindow *window) : m_handle(new PtrWindow(this)), m_window(window), m_monitor(nullptr)
+pragma::platform::Window::Window(GLFWwindow *window) : m_handle(util::create_handle<Window>(this)), m_window(window), m_monitor(nullptr)
 {
 	auto *monitor = glfwGetWindowMonitor(m_window);
 	if(monitor != nullptr)
@@ -275,7 +267,7 @@ void pragma::platform::Window::SetBorderColor(const Color &color)
 	auto tmp = color;
 	umath::swap(tmp.r, tmp.b);
 	auto hex = tmp.ToHexColorRGB();
-	COLORREF hexCol = ::util::to_hex_number("0x" + hex);
+	COLORREF hexCol = ::umath::to_hex_number("0x" + hex);
 	const DWORD ATTR_BORDER_COLOR = 34; // See DWMWINDOWATTRIBUTE::DWMWA_BORDER_COLOR, can't use the enum because it may not be available and there's no way to check for it
 	DwmSetWindowAttribute(GetWin32Handle(), ATTR_BORDER_COLOR, &hexCol, sizeof(hexCol));
 #endif
@@ -294,7 +286,7 @@ void pragma::platform::Window::SetTitleBarColor(const Color &color)
 	auto tmp = color;
 	umath::swap(tmp.r, tmp.b);
 	auto hex = tmp.ToHexColorRGB();
-	COLORREF hexCol = ::util::to_hex_number("0x" + hex);
+	COLORREF hexCol = ::umath::to_hex_number("0x" + hex);
 	const DWORD ATTR_CAPTION_COLOR = 35; // See DWMWINDOWATTRIBUTE::DWMWA_CAPTION_COLOR, can't use the enum because it may not be available and there's no way to check for it
 	DwmSetWindowAttribute(GetWin32Handle(), ATTR_CAPTION_COLOR, &hexCol, sizeof(hexCol));
 #endif

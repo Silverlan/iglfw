@@ -3,9 +3,6 @@
 
 module;
 
-#include <array>
-#include <string>
-#include <mathutil/uvec.h>
 #include <GLFW/glfw3.h>
 
 module pragma.platform;
