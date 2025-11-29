@@ -4,6 +4,7 @@
 module;
 
 #include "includes.hpp"
+#include "util_enum_flags.hpp"
 
 export module pragma.platform:keys;
 
@@ -160,8 +161,5 @@ export {
 		using namespace umath::scoped_enum::bitwise;
 	}
 
-	namespace umath::scoped_enum::bitwise {
-		template<>
-		struct enable_bitwise_operators<pragma::platform::Modifier> : std::true_type {};
-	}
+	REGISTER_ENUM_FLAGS(pragma::platform::Modifier)
 }

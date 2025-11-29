@@ -4,6 +4,7 @@
 module;
 
 #include "definitions.hpp"
+#include "util_enum_flags.hpp"
 #ifdef _WIN32
 #include <Windows.h>
 #endif
@@ -245,9 +246,6 @@ export namespace pragma::platform {
 	using namespace umath::scoped_enum::bitwise;
 };
 export {
-	namespace umath::scoped_enum::bitwise {
-		template<>
-		struct enable_bitwise_operators<pragma::platform::WindowCreationInfo::Flags> : std::true_type {};
-	}
+	REGISTER_ENUM_FLAGS(pragma::platform::WindowCreationInfo::Flags)
 };
 #pragma warning(pop)
