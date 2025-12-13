@@ -243,7 +243,7 @@ export namespace pragma::platform {
 		std::unique_ptr<WaylandDragAndDropInfo> m_pendingWaylandDragAndDrop;
 #endif
 	};
-	using namespace umath::scoped_enum::bitwise;
+	using namespace pragma::math::scoped_enum::bitwise;
 };
 export {
 	REGISTER_ENUM_FLAGS(pragma::platform::WindowCreationInfo::Flags)

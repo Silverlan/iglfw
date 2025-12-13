@@ -9,7 +9,7 @@ module pragma.platform;
 
 using namespace pragma::platform;
 
-Cursor::Cursor(GLFWcursor *cursor) : m_handle(util::create_handle<Cursor>(this)), m_cursor(cursor) {}
+Cursor::Cursor(GLFWcursor *cursor) : m_handle(pragma::util::create_handle<Cursor>(this)), m_cursor(cursor) {}
 
 Cursor::~Cursor()
 {
@@ -38,7 +38,7 @@ std::unique_ptr<Cursor> Cursor::Create(uint32_t width, uint32_t height, unsigned
 
 Cursor &Cursor::GetStandardCursor(Shape shape)
 {
-	static std::unordered_map<pragma::platform::Cursor::Shape, std::unique_ptr<pragma::platform::Cursor>> g_standardCursors;
+	static std::unordered_map<Shape, std::unique_ptr<Cursor>> g_standardCursors;
 	auto it = g_standardCursors.find(shape);
 	if(it == g_standardCursors.end()) {
 		auto *glfwCursor = glfwCreateStandardCursor(static_cast<int>(shape));

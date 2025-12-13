@@ -31,7 +31,7 @@ pragma::platform::WindowCreationInfo::WindowCreationInfo()
 {
 }
 
-pragma::platform::Window::Window(GLFWwindow *window) : m_handle(util::create_handle<Window>(this)), m_window(window), m_monitor(nullptr)
+pragma::platform::Window::Window(GLFWwindow *window) : m_handle(pragma::util::create_handle<Window>(this)), m_window(window), m_monitor(nullptr)
 {
 	auto *monitor = glfwGetWindowMonitor(m_window);
 	if(monitor != nullptr)
@@ -154,7 +154,7 @@ void pragma::platform::Window::MakeContextCurrent() const
 	if(GetAPI() == WindowCreationInfo::API::None)
 		return;
 	glfwMakeContextCurrent(m_window);
-	if(umath::is_flag_set(m_creationInfo.flags, WindowCreationInfo::Flags::DisableVSync))
+	if(math::is_flag_set(m_creationInfo.flags, WindowCreationInfo::Flags::DisableVSync))
 		glfwSwapInterval(0);
 	else
 		glfwSwapInterval(1);
@@ -227,10 +227,10 @@ bool pragma::platform::Window::IsInFocus() const { return glfwGetWindowAttrib(co
 
 void pragma::platform::Window::SetVSyncEnabled(bool enabled)
 {
-	umath::set_flag(m_creationInfo.flags, WindowCreationInfo::Flags::DisableVSync, !enabled);
+	math::set_flag(m_creationInfo.flags, WindowCreationInfo::Flags::DisableVSync, !enabled);
 	glfwSwapInterval(enabled ? 1 : 0);
 }
-bool pragma::platform::Window::IsVSyncEnabled() const { return !umath::is_flag_set(m_creationInfo.flags, WindowCreationInfo::Flags::DisableVSync); }
+bool pragma::platform::Window::IsVSyncEnabled() const { return !math::is_flag_set(m_creationInfo.flags, WindowCreationInfo::Flags::DisableVSync); }
 
 void pragma::platform::Window::SwapBuffers() const { glfwSwapBuffers(const_cast<GLFWwindow *>(GetGLFWWindow())); }
 void pragma::platform::Window::SetWindowTitle(const std::string &title)
@@ -265,9 +265,9 @@ void pragma::platform::Window::SetBorderColor(const Color &color)
 
 #if defined(WINVER) && (WINVER >= 0x0501)
 	auto tmp = color;
-	umath::swap(tmp.r, tmp.b);
+	pragma::math::swap(tmp.r, tmp.b);
 	auto hex = tmp.ToHexColorRGB();
-	COLORREF hexCol = ::umath::to_hex_number("0x" + hex);
+	COLORREF hexCol = ::pragma::math::to_hex_number("0x" + hex);
 	const DWORD ATTR_BORDER_COLOR = 34; // See DWMWINDOWATTRIBUTE::DWMWA_BORDER_COLOR, can't use the enum because it may not be available and there's no way to check for it
 	DwmSetWindowAttribute(GetWin32Handle(), ATTR_BORDER_COLOR, &hexCol, sizeof(hexCol));
 #endif
@@ -284,9 +284,9 @@ void pragma::platform::Window::SetTitleBarColor(const Color &color)
 
 #if defined(WINVER) && (WINVER >= 0x0A00)
 	auto tmp = color;
-	umath::swap(tmp.r, tmp.b);
+	pragma::math::swap(tmp.r, tmp.b);
 	auto hex = tmp.ToHexColorRGB();
-	COLORREF hexCol = ::umath::to_hex_number("0x" + hex);
+	COLORREF hexCol = ::pragma::math::to_hex_number("0x" + hex);
 	const DWORD ATTR_CAPTION_COLOR = 35; // See DWMWINDOWATTRIBUTE::DWMWA_CAPTION_COLOR, can't use the enum because it may not be available and there's no way to check for it
 	DwmSetWindowAttribute(GetWin32Handle(), ATTR_CAPTION_COLOR, &hexCol, sizeof(hexCol));
 #endif
@@ -467,7 +467,7 @@ void pragma::platform::Window::Reinitialize(const WindowCreationInfo &info)
 std::unique_ptr<pragma::platform::Window> pragma::platform::Window::Create(const WindowCreationInfo &info)
 {
 	std::string err;
-	if(pragma::platform::initialize(err) == false)
+	if(platform::initialize(err) == false)
 		throw std::runtime_error("Unable to create GLFW Window: GLFW hasn't been initialized!");
 	glfwDefaultWindowHints();
 	glfwWindowHint(GLFW_RESIZABLE, info.resizable);
@@ -502,16 +502,16 @@ std::unique_ptr<pragma::platform::Window> pragma::platform::Window::Create(const
 	}
 	glfwWindowHint(GLFW_CLIENT_API, api);
 
-	if(isOpenGLAPI && umath::is_flag_set(info.flags, WindowCreationInfo::Flags::DebugContext))
+	if(isOpenGLAPI && math::is_flag_set(info.flags, WindowCreationInfo::Flags::DebugContext))
 		glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE);
 
-	if(platform::is_headless())
+	if(is_headless())
 		glfwWindowHint(GLFW_CONTEXT_CREATION_API, GLFW_OSMESA_CONTEXT_API);
 
 	GLFWmonitor *monitor = nullptr;
 	if(info.monitor.has_value())
 		monitor = const_cast<GLFWmonitor *>(info.monitor->GetGLFWMonitor());
-	glfwWindowHint(GLFW_VISIBLE, umath::is_flag_set(info.flags, WindowCreationInfo::Flags::Windowless) ? GLFW_FALSE : GLFW_TRUE);
+	glfwWindowHint(GLFW_VISIBLE, math::is_flag_set(info.flags, WindowCreationInfo::Flags::Windowless) ? GLFW_FALSE : GLFW_TRUE);
 	auto *sharedContextWindow = info.sharedContextWindow ? const_cast<GLFWwindow *>(info.sharedContextWindow->GetGLFWWindow()) : nullptr;
 	auto *window = glfwCreateWindow(info.width, info.height, info.title.c_str(), monitor, sharedContextWindow);
 	if(window == nullptr)

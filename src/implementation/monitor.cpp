@@ -70,7 +70,7 @@ Monitor::VideoMode Monitor::GetVideoMode() const { return *glfwGetVideoMode(m_mo
 
 std::vector<Monitor::VideoMode> Monitor::GetSupportedVideoModes() const
 {
-	std::vector<Monitor::VideoMode> modes;
+	std::vector<VideoMode> modes;
 	int count = 0;
 	auto *videoModes = glfwGetVideoModes(m_monitor, &count);
 	modes.reserve(count);

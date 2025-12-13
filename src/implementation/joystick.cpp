@@ -49,9 +49,9 @@ void Joystick::Poll()
 	if(values != nullptr) {
 		InitializeAxes(count);
 		memcpy(m_axes.data(), values, sizeof(values[0]) * count);
-		auto threshold = pragma::platform::get_joystick_axis_threshold();
+		auto threshold = get_joystick_axis_threshold();
 		for(auto &axis : m_axes) {
-			if(umath::abs(axis) < threshold)
+			if(math::abs(axis) < threshold)
 				axis = 0.f;
 		}
 	}
@@ -62,7 +62,7 @@ void Joystick::Poll()
 		for(auto i = decltype(m_oldAxes.size()) {0}; i < m_oldAxes.size(); ++i) {
 			auto oldAxis = m_oldAxes.at(i);
 			auto newAxis = m_axes.at(i);
-			if(umath::abs(newAxis) > 0.f || umath::abs(oldAxis) > 0.f) // oldAxis > 0.f && newAxis == 0.f means the axis has been "unpressed"
+			if(math::abs(newAxis) > 0.f || math::abs(oldAxis) > 0.f) // oldAxis > 0.f && newAxis == 0.f means the axis has been "unpressed"
 				m_axisCallback(i, oldAxis, newAxis);
 		}
 	}

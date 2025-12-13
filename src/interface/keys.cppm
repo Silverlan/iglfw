@@ -158,7 +158,7 @@ export {
 		enum class Modifier : uint32_t { None = 0, Shift = GLFW_MOD_SHIFT, Control = GLFW_MOD_CONTROL, Alt = GLFW_MOD_ALT, Super = GLFW_MOD_SUPER, AxisInput = Super << 1, AxisPress = AxisInput << 1, AxisRelease = AxisPress << 1, AxisNegative = AxisRelease << 1 };
 		enum class InputMode : uint32_t { Cursor = GLFW_CURSOR, StickyKeys = GLFW_STICKY_KEYS, StickyMouseButtons = GLFW_STICKY_MOUSE_BUTTONS };
 
-		using namespace umath::scoped_enum::bitwise;
+		using namespace pragma::math::scoped_enum::bitwise;
 	}
 
 	REGISTER_ENUM_FLAGS(pragma::platform::Modifier)

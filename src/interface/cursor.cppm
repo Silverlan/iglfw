@@ -32,11 +32,11 @@ export {
 			void Remove();
 			const GLFWcursor *GetGLFWCursor() const;
 		};
-		using namespace umath::scoped_enum::arithmetic;
+		using namespace pragma::math::scoped_enum::arithmetic;
 	};
 
-	namespace umath::scoped_enum::arithmetic {
+	namespace pragma::math::scoped_enum::arithmetic {
 		template<>
-		struct enable_arithmetic_operators<pragma::platform::CursorMode> : std::true_type {};
+		struct enable_arithmetic_operators<platform::CursorMode> : std::true_type {};
 	}
 }

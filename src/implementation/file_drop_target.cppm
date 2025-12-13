@@ -81,7 +81,7 @@ export namespace pragma::platform {
 						wchar_t fileName[MAX_PATH];
 
 						if(DragQueryFileW(hDrop, i, fileName, MAX_PATH))
-							droppedFiles.push_back(ustring::wstring_to_string(fileName));
+							droppedFiles.push_back(pragma::string::wstring_to_string(fileName));
 					}
 					GlobalUnlock(stg.hGlobal);
 				}

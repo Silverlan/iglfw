@@ -89,7 +89,7 @@ std::string pragma::platform::get_version_string() { return glfwGetVersionString
 void pragma::platform::poll_events()
 {
 	glfwPollEvents();
-	for(auto *window : pragma::platform::Window::GetWindows())
+	for(auto *window : Window::GetWindows())
 		window->Poll();
 }
 void pragma::platform::poll_joystick_events()
@@ -116,7 +116,7 @@ void pragma::platform::set_joystick_state_callback(const std::function<void(cons
 		s_joystickHandler->SetJoystickStateCallback(nullptr);
 		return;
 	}
-	s_joystickHandler->SetJoystickStateCallback([callback](const pragma::platform::Joystick &joystick, pragma::platform::JoystickHandler::JoystickState state) { callback(joystick, (state == pragma::platform::JoystickHandler::JoystickState::Connected) ? true : false); });
+	s_joystickHandler->SetJoystickStateCallback([callback](const Joystick &joystick, JoystickHandler::JoystickState state) { callback(joystick, (state == JoystickHandler::JoystickState::Connected) ? true : false); });
 }
 void pragma::platform::set_joystick_button_callback(const std::function<void(const Joystick &, uint32_t, KeyState, KeyState)> &callback)
 {
@@ -154,7 +154,7 @@ float pragma::platform::get_joystick_axis_threshold() { return s_axisThreshold; 
 const std::vector<std::shared_ptr<pragma::platform::Joystick>> &pragma::platform::get_joysticks()
 {
 	if(s_joystickHandler == nullptr) {
-		static std::vector<std::shared_ptr<pragma::platform::Joystick>> r {};
+		static std::vector<std::shared_ptr<Joystick>> r {};
 		return r;
 	}
 	return s_joystickHandler->GetJoysticks();
@@ -180,16 +180,16 @@ const std::vector<pragma::platform::KeyState> &pragma::platform::get_joystick_bu
 {
 	auto &joysticks = get_joysticks();
 	if(joystickId >= joysticks.size()) {
-		static std::vector<pragma::platform::KeyState> r {};
+		static std::vector<KeyState> r {};
 		return r;
 	}
 	return joysticks.at(joystickId)->GetButtons();
 }
 
-pragma::platform::Monitor pragma::platform::get_primary_monitor() { return pragma::platform::Monitor(glfwGetPrimaryMonitor()); }
+pragma::platform::Monitor pragma::platform::get_primary_monitor() { return Monitor(glfwGetPrimaryMonitor()); }
 std::vector<pragma::platform::Monitor> pragma::platform::get_monitors()
 {
-	std::vector<pragma::platform::Monitor> r;
+	std::vector<Monitor> r;
 	int count = 0;
 	auto *monitors = glfwGetMonitors(&count);
 	r.reserve(count);

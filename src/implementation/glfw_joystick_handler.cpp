@@ -33,7 +33,7 @@ JoystickHandler::JoystickHandler()
 			m_joystickStateCallback(*m_joysticks.back(), JoystickState::Connected);
 		auto &joystick = m_joysticks.back();
 		auto *ptrJoystick = joystick.get();
-		joystick->SetButtonCallback([this, ptrJoystick](uint32_t button, pragma::platform::KeyState oldState, pragma::platform::KeyState newState) {
+		joystick->SetButtonCallback([this, ptrJoystick](uint32_t button, KeyState oldState, KeyState newState) {
 			if(m_joystickButtonCallback == nullptr)
 				return;
 			m_joystickButtonCallback(*ptrJoystick, button, oldState, newState);
