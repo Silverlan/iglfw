@@ -4,6 +4,7 @@
 module;
 
 #include "includes.hpp"
+#include <util_enum_flags.hpp>
 
 export module pragma.platform:cursor;
 
@@ -34,9 +35,5 @@ export {
 		};
 		using namespace pragma::math::scoped_enum::arithmetic;
 	};
-
-	namespace pragma::math::scoped_enum::arithmetic {
-		template<>
-		struct enable_arithmetic_operators<platform::CursorMode> : std::true_type {};
-	}
+	REGISTER_ENUM_ARITHMETIC_OPERATORS(pragma::platform::CursorMode)
 }
