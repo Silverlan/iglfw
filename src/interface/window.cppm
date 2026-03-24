@@ -140,7 +140,8 @@ export namespace pragma::platform {
 		void SetCursorPosOverride(const Vector2 &pos);
 		const std::optional<Vector2> &GetCursorPosOverride() const { return m_cursorPosOverride; }
 		void ClearCursorPosOverride();
-		void SetCursorPos(const Vector2 &pos);
+		// Note: Setting cursor pos only works on Wayland if the cursor mode is set to disabled
+		bool SetCursorPos(const Vector2 &pos);
 		void SetCursorInputMode(CursorMode mode);
 		CursorMode GetCursorInputMode() const;
 		void SetStickyKeysEnabled(bool b);

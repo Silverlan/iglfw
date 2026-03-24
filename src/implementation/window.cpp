@@ -211,7 +211,12 @@ Vector2 pragma::platform::Window::GetCursorPos() const
 }
 void pragma::platform::Window::SetCursorPosOverride(const Vector2 &pos) { m_cursorPosOverride = pos; }
 void pragma::platform::Window::ClearCursorPosOverride() { m_cursorPosOverride = {}; }
-void pragma::platform::Window::SetCursorPos(const Vector2 &pos) { glfwSetCursorPos(const_cast<GLFWwindow *>(GetGLFWWindow()), pos.x, pos.y); }
+bool pragma::platform::Window::SetCursorPos(const Vector2 &pos)
+{
+	glfwGetError(nullptr);
+	glfwSetCursorPos(const_cast<GLFWwindow *>(GetGLFWWindow()), pos.x, pos.y);
+	return glfwGetError(nullptr) == GLFW_NO_ERROR;
+}
 void pragma::platform::Window::SetCursorInputMode(CursorMode mode) { return glfwSetInputMode(const_cast<GLFWwindow *>(GetGLFWWindow()), GLFW_CURSOR, static_cast<int>(mode)); }
 pragma::platform::CursorMode pragma::platform::Window::GetCursorInputMode() const { return static_cast<CursorMode>(glfwGetInputMode(const_cast<GLFWwindow *>(GetGLFWWindow()), GLFW_CURSOR)); }
 void pragma::platform::Window::SetStickyKeysEnabled(bool b) { return glfwSetInputMode(const_cast<GLFWwindow *>(GetGLFWWindow()), GLFW_STICKY_KEYS, (b == true) ? GLFW_TRUE : GLFW_FALSE); }
