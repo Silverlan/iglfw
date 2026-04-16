@@ -95,7 +95,7 @@ export namespace pragma::platform {
 	class DLLGLFW Window {
 	  public:
 		static std::vector<Window *> &GetWindows();
-		static std::unique_ptr<Window> Create(const WindowCreationInfo &info);
+		static std::expected<std::unique_ptr<Window>, std::string> Create(const WindowCreationInfo &info);
 		~Window();
 		const GLFWwindow *GetGLFWWindow() const;
 		WindowHandle GetHandle();

@@ -469,11 +469,11 @@ void pragma::platform::Window::Reinitialize(const WindowCreationInfo &info)
 	m_creationInfo.refreshRate = info.refreshRate;
 }
 
-std::unique_ptr<pragma::platform::Window> pragma::platform::Window::Create(const WindowCreationInfo &info)
+std::expected<std::unique_ptr<pragma::platform::Window>, std::string> pragma::platform::Window::Create(const WindowCreationInfo &info)
 {
 	std::string err;
-	if(platform::initialize(err) == false)
-		throw std::runtime_error("Unable to create GLFW Window: GLFW hasn't been initialized!");
+	if(initialize(err) == false)
+		return std::unexpected {"Unable to create GLFW Window: GLFW hasn't been initialized!"};
 	glfwDefaultWindowHints();
 	glfwWindowHint(GLFW_RESIZABLE, info.resizable);
 	glfwWindowHint(GLFW_VISIBLE, info.visible);
@@ -519,8 +519,19 @@ std::unique_ptr<pragma::platform::Window> pragma::platform::Window::Create(const
 	glfwWindowHint(GLFW_VISIBLE, math::is_flag_set(info.flags, WindowCreationInfo::Flags::Windowless) ? GLFW_FALSE : GLFW_TRUE);
 	auto *sharedContextWindow = info.sharedContextWindow ? const_cast<GLFWwindow *>(info.sharedContextWindow->GetGLFWWindow()) : nullptr;
 	auto *window = glfwCreateWindow(info.width, info.height, info.title.c_str(), monitor, sharedContextWindow);
-	if(window == nullptr)
-		throw std::runtime_error("Unable to create GLFW Window!");
+	if(!window) {
+		const char *errMsg = nullptr;
+		auto errCode = glfwGetError(&errMsg);
+		std::stringstream errMsgStream;
+		errMsgStream << "Failed to create GLFW Window: ";
+		if(errMsg)
+			errMsgStream << errMsg << " (Error Code: " << errCode << ")";
+		else if(errCode != GLFW_NO_ERROR)
+			errMsgStream << "Error Code: " << errCode;
+		else
+			errMsgStream << "Unknown error.";
+		return std::unexpected{errMsgStream.str()};
+	}
 	auto vkWindow = std::unique_ptr<Window>(new Window(window));
 	glfwSetWindowRefreshCallback(window, [](GLFWwindow *window) {
 		auto *vkWindow = static_cast<Window *>(glfwGetWindowUserPointer(window));
