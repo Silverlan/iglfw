@@ -33,9 +33,9 @@ bool pragma::platform::initialize(std::string &outErr, bool headless)
 		const char *description;
 		int code = glfwGetError(&description);
 		if(description)
-			outErr = std::string {description} + " (" + std::to_string(code) + ")!";
+			outErr = std::string {description} + " (" + util::to_string(code) + ")!";
 		else
-			outErr = "error " + std::to_string(code) + "!";
+			outErr = "error " + util::to_string(code) + "!";
 		return false;
 	}
 
