@@ -17,33 +17,34 @@ static bool g_initialized = false;
 static bool g_headless = false;
 static pragma::platform::JoystickHandler *s_joystickHandler = nullptr;
 
-bool pragma::platform::initialize(std::string &outErr, bool headless)
+static int platform_to_glfw_enum(pragma::platform::Platform platform);
+std::expected<void, std::string> pragma::platform::initialize(InitInfo initInfo)
 {
 	if(g_initialized)
-		return g_initialized;
+		return {};
 #ifdef _WIN32
 	// On Windows we can just use the Win32 platform for headless rendering
-	headless = false;
+	initInfo.headless = false;
 #endif
-	g_headless = headless;
-	if(headless)
+	g_headless = initInfo.headless;
+	if(g_headless)
 		glfwInitHint(GLFW_PLATFORM, GLFW_PLATFORM_NULL);
+	else if(initInfo.platform)
+		glfwInitHint(GLFW_PLATFORM, platform_to_glfw_enum(*initInfo.platform));
 	auto res = glfwInit();
 	if(res != GLFW_TRUE) {
 		const char *description;
 		int code = glfwGetError(&description);
 		if(description)
-			outErr = std::string {description} + " (" + util::to_string(code) + ")!";
-		else
-			outErr = "error " + util::to_string(code) + "!";
-		return false;
+			return std::unexpected {std::format("{} ({})!", description, util::to_string(code))};
+		return std::unexpected {std::format("error {}!", util::to_string(code))};
 	}
 
 	g_initialized = true;
 #ifdef _WIN32
 	OleInitialize(nullptr);
 #endif
-	return g_initialized;
+	return {};
 }
 
 void pragma::platform::terminate()
@@ -55,6 +56,24 @@ void pragma::platform::terminate()
 #ifdef _WIN32
 	OleUninitialize();
 #endif
+}
+
+int platform_to_glfw_enum(pragma::platform::Platform platform)
+{
+	switch(platform) {
+	case pragma::platform::Platform::Win32:
+		return GLFW_PLATFORM_WIN32;
+	case pragma::platform::Platform::Cocoa:
+		return GLFW_PLATFORM_COCOA;
+	case pragma::platform::Platform::Wayland:
+		return GLFW_PLATFORM_WAYLAND;
+	case pragma::platform::Platform::X11:
+		return GLFW_PLATFORM_X11;
+	case pragma::platform::Platform::Windowless:
+		return GLFW_PLATFORM_NULL;
+	}
+	static_assert(pragma::math::to_integral(pragma::platform::Platform::Count) == 6, "Update this list when new platform types are added!");
+	return GLFW_ANY_PLATFORM;
 }
 
 pragma::platform::Platform pragma::platform::get_platform()
@@ -74,6 +93,7 @@ pragma::platform::Platform pragma::platform::get_platform()
 	default:
 		break;
 	}
+	static_assert(math::to_integral(Platform::Count) == 6, "Update this list when new platform types are added!");
 	return Platform::Unknown;
 }
 

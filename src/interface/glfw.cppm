@@ -21,7 +21,11 @@ export namespace pragma::platform {
 
 		Count,
 	};
-	DLLGLFW bool initialize(std::string &outErr, bool headless = false);
+	struct DLLGLFW InitInfo {
+		bool headless = false;
+		std::optional<Platform> platform = {};
+	};
+	DLLGLFW std::expected<void, std::string> initialize(InitInfo initInfo = {});
 	DLLGLFW void terminate();
 	DLLGLFW Platform get_platform();
 	DLLGLFW void get_version(int *major, int *minor, int *rev);

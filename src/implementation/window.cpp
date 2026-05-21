@@ -471,9 +471,8 @@ void pragma::platform::Window::Reinitialize(const WindowCreationInfo &info)
 
 std::expected<std::unique_ptr<pragma::platform::Window>, std::string> pragma::platform::Window::Create(const WindowCreationInfo &info)
 {
-	std::string err;
-	if(initialize(err) == false)
-		return std::unexpected {"Unable to create GLFW Window: GLFW hasn't been initialized!"};
+	if(auto res = initialize(); !res)
+		return std::unexpected {res.error()};
 	glfwDefaultWindowHints();
 	glfwWindowHint(GLFW_RESIZABLE, info.resizable);
 	glfwWindowHint(GLFW_VISIBLE, info.visible);
@@ -530,7 +529,7 @@ std::expected<std::unique_ptr<pragma::platform::Window>, std::string> pragma::pl
 			errMsgStream << "Error Code: " << errCode;
 		else
 			errMsgStream << "Unknown error.";
-		return std::unexpected{errMsgStream.str()};
+		return std::unexpected {errMsgStream.str()};
 	}
 	auto vkWindow = std::unique_ptr<Window>(new Window(window));
 	glfwSetWindowRefreshCallback(window, [](GLFWwindow *window) {
