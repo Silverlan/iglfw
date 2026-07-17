@@ -18,6 +18,15 @@ static bool g_headless = false;
 static pragma::platform::JoystickHandler *s_joystickHandler = nullptr;
 
 static int platform_to_glfw_enum(pragma::platform::Platform platform);
+
+#ifdef __linux__
+static bool check_env(const char *envVar, const char *value)
+{
+	auto *envVal = std::getenv(envVar);
+	return envVal != nullptr && std::strstr(envVal, value) != nullptr;
+}
+#endif
+
 std::expected<void, std::string> pragma::platform::initialize(InitInfo initInfo)
 {
 	if(g_initialized)
@@ -31,6 +40,17 @@ std::expected<void, std::string> pragma::platform::initialize(InitInfo initInfo)
 		glfwInitHint(GLFW_PLATFORM, GLFW_PLATFORM_NULL);
 	else if(initInfo.platform)
 		glfwInitHint(GLFW_PLATFORM, platform_to_glfw_enum(*initInfo.platform));
+
+#ifdef __linux__
+	// libdecor currently does not handle borderless mode properly, so
+	// we'll disable it when possible.
+	// TODO: Whenever borderless mode works with libdecor on wayland, this should be removed!
+	auto isKDE = check_env("XDG_CURRENT_DESKTOP", "KDE");
+	auto isHyprland = check_env("XDG_CURRENT_DESKTOP", "Hyprland");
+	auto isSway = check_env("XDG_CURRENT_DESKTOP", "sway");
+	if (isKDE || isHyprland || isSway)
+		glfwInitHint(GLFW_WAYLAND_LIBDECOR, GLFW_WAYLAND_DISABLE_LIBDECOR);
+#endif
 	auto res = glfwInit();
 	if(res != GLFW_TRUE) {
 		const char *description;
