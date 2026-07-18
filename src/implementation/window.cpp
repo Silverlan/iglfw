@@ -377,6 +377,14 @@ void pragma::platform::Window::Restore() const { glfwRestoreWindow(const_cast<GL
 void pragma::platform::Window::Show() const { glfwShowWindow(const_cast<GLFWwindow *>(GetGLFWWindow())); }
 void pragma::platform::Window::Hide() const { glfwHideWindow(const_cast<GLFWwindow *>(GetGLFWWindow())); }
 
+bool pragma::platform::Window::IsMinimized() const
+{
+	auto *window = const_cast<GLFWwindow *>(GetGLFWWindow());
+	int width = 0, height = 0;
+	glfwGetFramebufferSize(window, &width, &height);
+	return (width == 0 || height == 0) || (glfwGetWindowAttrib(window, GLFW_ICONIFIED) == GLFW_TRUE);
+}
+
 void pragma::platform::Window::Maximize() { glfwMaximizeWindow(const_cast<GLFWwindow *>(GetGLFWWindow())); }
 bool pragma::platform::Window::IsMaximized() const { return (glfwGetWindowAttrib(const_cast<GLFWwindow *>(GetGLFWWindow()), GLFW_MAXIMIZED) != GLFW_FALSE) ? true : false; }
 std::optional<pragma::platform::MonitorBounds> pragma::platform::Window::GetMonitorBounds() const
@@ -515,7 +523,8 @@ std::expected<std::unique_ptr<pragma::platform::Window>, std::string> pragma::pl
 	GLFWmonitor *monitor = nullptr;
 	if(info.monitor.has_value())
 		monitor = const_cast<GLFWmonitor *>(info.monitor->GetGLFWMonitor());
-	glfwWindowHint(GLFW_VISIBLE, math::is_flag_set(info.flags, WindowCreationInfo::Flags::Windowless) ? GLFW_FALSE : GLFW_TRUE);
+	if(info.visible)
+		glfwWindowHint(GLFW_VISIBLE, math::is_flag_set(info.flags, WindowCreationInfo::Flags::Windowless) ? GLFW_FALSE : GLFW_TRUE);
 	auto *sharedContextWindow = info.sharedContextWindow ? const_cast<GLFWwindow *>(info.sharedContextWindow->GetGLFWWindow()) : nullptr;
 	auto *window = glfwCreateWindow(info.width, info.height, info.title.c_str(), monitor, sharedContextWindow);
 	if(!window) {

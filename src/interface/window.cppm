@@ -171,6 +171,7 @@ export namespace pragma::platform {
 		void Hide() const;
 		void Maximize();
 		bool IsMaximized() const;
+		bool IsMinimized() const;
 		std::optional<MonitorBounds> GetMonitorBounds() const;
 		const Monitor *GetMonitor() const;
 		const WindowCreationInfo &GetCreationInfo() const;
