@@ -411,6 +411,12 @@ std::optional<pragma::platform::MonitorBounds> pragma::platform::Window::GetMoni
 
 bool pragma::platform::Window::IsFocused() const { return (glfwGetWindowAttrib(const_cast<GLFWwindow *>(GetGLFWWindow()), GLFW_FOCUSED) != GLFW_FALSE) ? true : false; }
 bool pragma::platform::Window::IsIconified() const { return (glfwGetWindowAttrib(const_cast<GLFWwindow *>(GetGLFWWindow()), GLFW_ICONIFIED) != GLFW_FALSE) ? true : false; }
+bool pragma::platform::Window::IsActive() const
+{
+	if(math::is_flag_set(m_creationInfo.flags, WindowCreationInfo::Flags::Windowless))
+		return true;
+	return IsVisible();
+}
 bool pragma::platform::Window::IsVisible() const { return (glfwGetWindowAttrib(const_cast<GLFWwindow *>(GetGLFWWindow()), GLFW_VISIBLE) != GLFW_FALSE) ? true : false; }
 bool pragma::platform::Window::IsResizable() const { return (glfwGetWindowAttrib(const_cast<GLFWwindow *>(GetGLFWWindow()), GLFW_RESIZABLE) != GLFW_FALSE) ? true : false; }
 bool pragma::platform::Window::IsDecorated() const { return (glfwGetWindowAttrib(const_cast<GLFWwindow *>(GetGLFWWindow()), GLFW_DECORATED) != GLFW_FALSE) ? true : false; }

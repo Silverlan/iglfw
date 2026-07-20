@@ -192,6 +192,11 @@ export namespace pragma::platform {
 		bool IsFocused() const;
 		bool IsIconified() const;
 		bool IsVisible() const;
+
+		// Same as IsVisible, except in windowless mode, in which case
+		// the window is considered active even when not visible (since the window
+		// is never visible in that case.)
+		bool IsActive() const;
 		bool IsResizable() const;
 		bool IsDecorated() const;
 		bool IsFloating() const;
